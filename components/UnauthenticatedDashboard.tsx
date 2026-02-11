@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, Zap, Briefcase, Wrench, Equal, Search, TrendingUp, Activity, Globe, Stars } from 'lucide-react';
-import { GATVisualizer } from './GATVisualizer';
+import GATVisualizer from './GATVisualizer';
 
 interface UnauthenticatedDashboardProps {
     onNavigate: (tab: string) => void;

@@ -17,3 +17,6 @@ export const supabase = createClient(
     supabaseUrl && !supabaseUrl.includes('your-project') ? supabaseUrl : defaultUrl,
     supabaseAnonKey && !supabaseAnonKey.includes('your-anon-key') ? supabaseAnonKey : defaultKey
 );
+
+console.log('🔌 Supabase Initialized. URL:', supabaseUrl ? supabaseUrl.substring(0, 20) + '...' : 'Not Set');
+

@@ -41,7 +41,7 @@ export const getSupportResponse = async (message: string, history: any[]): Promi
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: [...history, { role: 'user', parts: [{ text: message }] }],
-      config: { 
+      config: {
         systemInstruction,
         tools: [{ googleSearch: {} }]
       }
@@ -57,7 +57,7 @@ export const getSupportResponse = async (message: string, history: any[]): Promi
  * Main Coaching Logic - Using gemini-3-flash-preview with search grounding for real-time market data.
  */
 export const chatWithCoach = async (
-  history: { role: string; text: string }[], 
+  history: { role: string; text: string }[],
   message: string,
   useThinking: boolean = false,
   language: Language = 'EN'
@@ -72,10 +72,10 @@ export const chatWithCoach = async (
     // Standardizing on gemini-3-flash-preview for fast, search-grounded market analysis.
     const model = 'gemini-3-flash-preview';
     const localizedInstruction = `${SYSTEM_INSTRUCTION_BASE}\nIMPORTANT: RESPOND ENTIRELY IN THE LANGUAGE CODE: ${language}.`;
-    
+
     const config: any = {
       systemInstruction: localizedInstruction,
-      tools: [{ googleSearch: {} }] 
+      tools: [{ googleSearch: {} }]
     };
 
     const chat = ai.chats.create({
@@ -85,7 +85,7 @@ export const chatWithCoach = async (
     });
 
     const result = await chat.sendMessage({ message: `[SEARCH THE WEB FOR LATEST 2025 TRENDS. RESPOND IN ${language}] ${message}` });
-    
+
     const sources = result.candidates?.[0]?.groundingMetadata?.groundingChunks
       ?.filter(chunk => chunk.web)
       ?.map(chunk => ({ title: chunk.web.title, uri: chunk.web.uri })) || [];
@@ -108,12 +108,12 @@ export interface GeneratedGigWithSources extends GeneratedGig {
  * GAT Strategy Generation - Uses Search Grounding to find high-value gaps.
  */
 export const generateGATStrategy = async (
-  skills: string, 
+  skills: string,
   interests: string,
   language: Language = 'EN'
 ): Promise<GeneratedGigWithSources | null> => {
   const ai = getClient();
-  
+
   const prompt = `
     Based on the user's skills: "${skills}" and interests: "${interests}", 
     generate a LIVE, HIGH-VALUE GAT (Gig + Action + Tool) strategy for 2025.
@@ -139,13 +139,13 @@ export const generateGATStrategy = async (
           type: Type.OBJECT,
           properties: {
             gigTitle: { type: Type.STRING },
-            actionPlan: { 
-              type: Type.ARRAY, 
-              items: { type: Type.STRING } 
+            actionPlan: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING }
             },
-            recommendedTools: { 
-              type: Type.ARRAY, 
-              items: { type: Type.STRING } 
+            recommendedTools: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING }
             },
             estimatedEarnings: { type: Type.STRING }
           },
@@ -159,7 +159,7 @@ export const generateGATStrategy = async (
       const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
         ?.filter(chunk => chunk.web)
         ?.map(chunk => ({ title: chunk.web.title, uri: chunk.web.uri })) || [];
-        
+
       return { ...gig, sources: sources.length > 0 ? sources : undefined };
     }
     return null;
@@ -193,14 +193,14 @@ export const generateVideo = async (prompt: string): Promise<string | null> => {
 
     while (!operation.done) {
       await new Promise(resolve => setTimeout(resolve, 10000));
-      operation = await ai.operations.getVideosOperation({operation: operation});
+      operation = await ai.operations.getVideosOperation({ operation: operation });
     }
 
     const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
     if (downloadLink) {
-       const response = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
-       const blob = await response.blob();
-       return URL.createObjectURL(blob);
+      const response = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
+      const blob = await response.blob();
+      return URL.createObjectURL(blob);
     }
     return null;
   } catch (error) {

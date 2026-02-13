@@ -58,6 +58,8 @@ import ImageEditor from './components/ImageEditor';
 import MyPlans from './components/MyPlans';
 import Footer from './components/Footer';
 import WhyUs from './components/WhyUs';
+import LandingPage from './components/LandingPage';
+import BusinessIntelligence from './components/BusinessIntelligence';
 import OnboardingModal from './components/OnboardingModal';
 import AuthModal from './components/AuthModal';
 import Pricing from './components/Pricing';
@@ -93,6 +95,7 @@ interface ChatMessageWithSources extends ChatMessage {
 const App: React.FC = () => {
   const { user, signOut, loading } = useAuth();
   const [activeTab, setActiveTab] = useState<TabView>(TabView.DASHBOARD);
+  const [userMode, setUserMode] = useState<'FREELANCER' | 'BUSINESS' | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
   const [isThinkingMode, setIsThinkingMode] = useState(false);
@@ -145,6 +148,14 @@ const App: React.FC = () => {
   }, [language, isRTL]);
 
   useEffect(() => {
+    // Check for saved mode preference
+    const savedMode = localStorage.getItem('gat_user_mode');
+    if (savedMode === 'FREELANCER' || savedMode === 'BUSINESS') {
+      setUserMode(savedMode);
+    }
+  }, []);
+
+  useEffect(() => {
     const hasOnboarded = localStorage.getItem('gat_onboarded');
     if (!hasOnboarded) {
       setShowOnboarding(true);
@@ -178,6 +189,27 @@ const App: React.FC = () => {
     localStorage.setItem('gat_lang', lang);
     setLangPickerOpen(false);
   };
+
+  const handleModeSelect = (mode: 'FREELANCER' | 'BUSINESS') => {
+    setUserMode(mode);
+    localStorage.setItem('gat_user_mode', mode);
+    setActiveTab(TabView.DASHBOARD);
+  };
+
+  const navItems = userMode === 'BUSINESS' ? [
+    { id: TabView.DASHBOARD, label: 'Intel Hub', icon: LayoutDashboard },
+    { id: TabView.BUSINESS_INTEL, label: 'Gap Analysis', icon: Activity },
+    { id: TabView.COACH, label: 'Strategy AI', icon: Bot },
+    { id: TabView.PRICING, label: 'Enterprise', icon: CreditCard },
+  ] : [
+    { id: TabView.DASHBOARD, label: t.nav.home, icon: LayoutDashboard },
+    { id: TabView.GENERATOR, label: t.nav.jobs, icon: Zap },
+    { id: TabView.COACH, label: t.nav.coach, icon: Bot },
+    { id: TabView.MY_PLANS, label: t.nav.plans, icon: Bookmark },
+    { id: TabView.IMAGE, label: t.nav.image, icon: ImageIcon, hideOnMd: true },
+    { id: TabView.PRICING, label: t.nav.pricing, icon: CreditCard, hideOnMd: true },
+    { id: TabView.VIDEO, label: t.nav.video, icon: Film },
+  ];
 
   const handleSendMessage = async (msgOverride?: string, forceThinking: boolean = false) => {
     const textToSend = msgOverride || inputMessage;
@@ -360,261 +392,266 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 font-sans selection:bg-emerald-500 selection:text-white transition-colors duration-300">
-      <OnboardingModal isOpen={showOnboarding} onClose={handleCloseOnboarding} />
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
 
-      {/* Welcome Message */}
-      {showWelcome && user && (
-        <WelcomeMessage
-          userName={user.email?.split('@')[0] || 'User'}
-          onDismiss={() => setShowWelcome(false)}
-          isFirstLogin={isFirstLogin}
-        />
-      )}
+      {!userMode && !loading ? (
+        <LandingPage onSelectMode={handleModeSelect} />
+      ) : (
+        <>
+          <OnboardingModal isOpen={showOnboarding} onClose={handleCloseOnboarding} />
+          <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
 
-      <header className="sticky top-0 z-40 w-full backdrop-blur-2xl bg-white/70 dark:bg-slate-950/70 border-b border-slate-200 dark:border-white/5 py-4">
-        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setActiveTab(TabView.DASHBOARD)}>
-            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 via-teal-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-[0_10px_20px_rgba(16,185,129,0.3)] group-hover:scale-110 transition-transform duration-500">
-              <span className="font-black text-white text-2xl tracking-tighter">G</span>
+          {/* Welcome Message */}
+          {showWelcome && user && (
+            <WelcomeMessage
+              userName={user.email?.split('@')[0] || 'User'}
+              onDismiss={() => setShowWelcome(false)}
+              isFirstLogin={isFirstLogin}
+            />
+          )}
+
+          <header className="sticky top-0 z-40 w-full backdrop-blur-2xl bg-white/70 dark:bg-slate-950/70 border-b border-slate-200 dark:border-white/5 py-4">
+            <div className="container mx-auto px-6 h-16 flex items-center justify-between">
+              <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setActiveTab(TabView.DASHBOARD)}>
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 via-teal-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-[0_10px_20px_rgba(16,185,129,0.3)] group-hover:scale-110 transition-transform duration-500">
+                  <span className="font-black text-white text-2xl tracking-tighter">G</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-2xl font-black text-slate-900 dark:text-white leading-none tracking-tighter uppercase">GATSMONEY</span>
+                  <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-500 tracking-[0.3em] leading-none mt-1 flex items-center gap-1 uppercase">
+                    <Activity className="w-2.5 h-2.5" /> PULSE_SYNCED
+                  </span>
+                </div>
+              </div>
+
+              <nav className="hidden lg:flex items-center gap-0.5 bg-slate-100/50 dark:bg-slate-900/50 p-1 rounded-2xl border border-slate-200 dark:border-slate-800">
+                {navItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id)}
+                    className={`px-3 xl:px-4 py-2 rounded-xl flex items-center gap-1.5 xl:gap-2 text-[10px] xl:text-xs font-black transition-all uppercase tracking-wider ${item.hideOnMd ? 'hidden xl:flex' : ''} ${activeTab === item.id
+                      ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-xl border border-emerald-500/20'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      }`}
+                  >
+                    {item.id === TabView.GENERATOR ? <Zap className="w-3.5 h-3.5 xl:w-4 xl:h-4" /> :
+                      item.id === TabView.COACH ? <Bot className="w-3.5 h-3.5 xl:w-4 xl:h-4" /> :
+                        item.id === TabView.MY_PLANS ? <Bookmark className="w-3.5 h-3.5 xl:w-4 xl:h-4" /> :
+                          item.id === TabView.IMAGE ? <ImageIcon className="w-3.5 h-3.5 xl:w-4 xl:h-4" /> :
+                            item.id === TabView.VIDEO ? <Film className="w-3.5 h-3.5 xl:w-4 xl:h-4" /> :
+                              item.id === TabView.PRICING ? <CreditCard className="w-3.5 h-3.5 xl:w-4 xl:h-4" /> :
+                                item.id === TabView.BUSINESS_INTEL ? <Activity className="w-3.5 h-3.5 xl:w-4 xl:h-4" /> :
+                                  <LayoutDashboard className="w-3.5 h-3.5 xl:w-4 xl:h-4" />}
+                    <span className="hidden lg:inline">{item.label}</span>
+                  </button>
+                ))}
+
+                <div className="w-px h-5 bg-slate-200 dark:bg-slate-800 mx-1"></div>
+
+                {/* Restored Language Toggle */}
+                <div className="relative">
+                  <button
+                    onClick={() => setLangPickerOpen(!langPickerOpen)}
+                    className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-xl flex items-center gap-1 group"
+                  >
+                    <Languages className="w-4 h-4 xl:w-5 xl:h-5 group-hover:rotate-12 transition-transform" />
+                    <span className="text-[9px] xl:text-[10px] font-black uppercase tracking-wider">{language}</span>
+                  </button>
+                  {langPickerOpen && (
+                    <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl overflow-hidden z-50 animate-scale-in">
+                      <div className="max-h-60 overflow-y-auto custom-scrollbar">
+                        {Object.entries(LANGUAGES).map(([code, config]) => (
+                          <button
+                            key={code}
+                            onClick={() => handleLanguageChange(code as Language)}
+                            className={`w-full px-4 py-3 text-left text-xs font-black flex items-center gap-3 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors uppercase tracking-widest ${language === code ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30' : 'text-slate-600 dark:text-slate-400'
+                              }`}
+                          >
+                            <span className="text-base leading-none">{config.flag}</span>
+                            {config.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  onClick={toggleTheme}
+                  className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-xl"
+                >
+                  {isDark ? <Sun className="w-4 h-4 xl:w-5 xl:h-5" /> : <Moon className="w-4 h-4 xl:w-5 xl:h-5" />}
+                </button>
+
+                <div className="w-px h-5 bg-slate-200 dark:bg-slate-800 mx-1"></div>
+
+                {/* Auth Button with Interactive Tooltip */}
+                {user ? (
+                  <div className="relative group">
+                    <button className="flex items-center gap-1.5 px-2.5 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-xl transition-all">
+                      <User className="w-3.5 h-3.5 xl:w-4 xl:h-4 text-indigo-600 dark:text-indigo-400" />
+                      <span className="text-[10px] xl:text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-wider max-w-[80px] xl:max-w-[100px] truncate">
+                        {user.email?.split('@')[0]}
+                      </span>
+                    </button>
+                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                      <button
+                        onClick={() => signOut()}
+                        className="w-full px-4 py-3 text-left text-xs font-black flex items-center gap-3 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors text-red-600 dark:text-red-400 uppercase tracking-widest"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    className="relative"
+                    onMouseEnter={() => setShowLoginTooltip(true)}
+                    onMouseLeave={() => setShowLoginTooltip(false)}
+                  >
+                    <button
+                      onClick={() => {
+                        setShowAuthModal(true);
+                        setShowLoginTooltip(false);
+                      }}
+                      className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-black uppercase tracking-wider transition-all shadow-lg shadow-indigo-500/20 text-[10px] xl:text-xs flex items-center gap-1.5"
+                    >
+                      <User className="w-3.5 h-3.5 xl:w-4 xl:h-4" />
+                      <span className="hidden xl:inline">Login</span>
+                    </button>
+
+                    {/* Get Started Tooltip */}
+                    {showLoginTooltip && (
+                      <div className="absolute bottom-full right-0 mb-3 w-64 animate-scale-in">
+                        <div className="relative bg-gradient-to-br from-emerald-500 to-indigo-600 p-[2px] rounded-2xl shadow-2xl">
+                          <div className="bg-white dark:bg-slate-900 rounded-2xl p-4">
+                            <div className="flex items-start gap-3 mb-3">
+                              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0 animate-pulse">
+                                <Rocket className="w-5 h-5 text-white" />
+                              </div>
+                              <div className="flex-1">
+                                <h4 className="text-sm font-black text-slate-900 dark:text-white mb-1">
+                                  Join 10,000+ GAT Strategists
+                                </h4>
+                                <p className="text-xs text-slate-600 dark:text-slate-400">
+                                  Start turning AI tools into profit machines today!
+                                </p>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => {
+                                setShowAuthModal(true);
+                                setShowLoginTooltip(false);
+                              }}
+                              className="w-full px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-black rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 text-xs uppercase tracking-wider"
+                            >
+                              <Rocket className="w-4 h-4" />
+                              Get Started Free
+                              <ArrowRight className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                        {/* Arrow */}
+                        <div className="absolute -bottom-2 right-4 w-4 h-4 bg-white dark:bg-slate-900 transform rotate-45 border-r-2 border-b-2 border-emerald-500"></div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </nav>
+
+              <div className="lg:hidden flex items-center gap-2">
+                <button
+                  onClick={() => { setUserMode(null); mapModeToTab(null); }}
+                  className="p-3 bg-slate-100 dark:bg-slate-900 rounded-xl text-slate-900 dark:text-slate-300"
+                >
+                  <TrendingUp className="w-5 h-5" />
+                </button>
+                {/* Language Toggle for Mobile */}
+                <button
+                  onClick={() => { setLangPickerOpen(!langPickerOpen); setMobileMenuOpen(false); }}
+                  className="p-3 bg-slate-100 dark:bg-slate-900 rounded-xl text-slate-900 dark:text-slate-300 flex items-center gap-2"
+                >
+                  <Languages className="w-5 h-5" />
+                  <span className="text-[10px] font-black">{language}</span>
+                </button>
+                <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-3 bg-slate-100 dark:bg-slate-900 rounded-xl text-slate-900 dark:text-slate-300">
+                  {mobileMenuOpen ? <X /> : <Menu />}
+                </button>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-2xl font-black text-slate-900 dark:text-white leading-none tracking-tighter uppercase">GATSMONEY</span>
-              <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-500 tracking-[0.3em] leading-none mt-1 flex items-center gap-1 uppercase">
-                <Activity className="w-2.5 h-2.5" /> PULSE_SYNCED
-              </span>
-            </div>
-          </div>
+          </header>
 
-          <nav className="hidden lg:flex items-center gap-0.5 bg-slate-100/50 dark:bg-slate-900/50 p-1 rounded-2xl border border-slate-200 dark:border-slate-800">
-            {[
-              { id: TabView.DASHBOARD, label: t.nav.home, icon: LayoutDashboard },
-              { id: TabView.GENERATOR, label: t.nav.jobs, icon: Zap },
-              { id: TabView.COACH, label: t.nav.coach, icon: Bot },
-              { id: TabView.MY_PLANS, label: t.nav.plans, icon: Bookmark },
-              { id: TabView.IMAGE, label: t.nav.image, icon: ImageIcon, hideOnMd: true },
-              { id: TabView.PRICING, label: t.nav.pricing, icon: CreditCard, hideOnMd: true },
-              { id: TabView.VIDEO, label: t.nav.video, icon: Film },
-            ].map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`px-3 xl:px-4 py-2 rounded-xl flex items-center gap-1.5 xl:gap-2 text-[10px] xl:text-xs font-black transition-all uppercase tracking-wider ${item.hideOnMd ? 'hidden xl:flex' : ''} ${activeTab === item.id
-                  ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-xl border border-emerald-500/20'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-              >
-                {item.id === TabView.GENERATOR ? <Zap className="w-3.5 h-3.5 xl:w-4 xl:h-4" /> :
-                  item.id === TabView.COACH ? <Bot className="w-3.5 h-3.5 xl:w-4 xl:h-4" /> :
-                    item.id === TabView.MY_PLANS ? <Bookmark className="w-3.5 h-3.5 xl:w-4 xl:h-4" /> :
-                      item.id === TabView.IMAGE ? <ImageIcon className="w-3.5 h-3.5 xl:w-4 xl:h-4" /> :
-                        item.id === TabView.VIDEO ? <Film className="w-3.5 h-3.5 xl:w-4 xl:h-4" /> :
-                          item.id === TabView.PRICING ? <CreditCard className="w-3.5 h-3.5 xl:w-4 xl:h-4" /> :
-                            <LayoutDashboard className="w-3.5 h-3.5 xl:w-4 xl:h-4" />}
-                <span className="hidden lg:inline">{item.label}</span>
-              </button>
-            ))}
+          {
+            mobileMenuOpen && (
+              <div className="lg:hidden fixed inset-0 z-50 bg-white dark:bg-slate-950 p-8 flex flex-col gap-6 animate-fade-in overflow-y-auto">
+                <div className="flex justify-between items-center mb-10">
+                  <div className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">GATSMONEY_MENU</div>
+                  <button onClick={() => setMobileMenuOpen(false)} className="p-2 bg-slate-100 dark:bg-slate-900 rounded-full"><X className="w-8 h-8 dark:text-white" /></button>
+                </div>
+                {[
+                  ...navItems,
+                  { id: TabView.LEARN, label: t.nav.learn, icon: BookOpen },
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => { setActiveTab(item.id); setMobileMenuOpen(false); }}
+                    className={`w-full py-6 text-3xl font-black text-left border-b border-slate-200 dark:border-slate-800 flex items-center justify-between ${activeTab === item.id ? 'text-emerald-500' : 'text-slate-900 dark:text-white uppercase tracking-tighter'}`}
+                  >
+                    {item.label}
+                    <item.icon className="w-10 h-10" />
+                  </button>
+                ))}
+              </div>
+            )
+          }
 
-            <div className="w-px h-5 bg-slate-200 dark:bg-slate-800 mx-1"></div>
-
-            {/* Restored Language Toggle */}
-            <div className="relative">
-              <button
-                onClick={() => setLangPickerOpen(!langPickerOpen)}
-                className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-xl flex items-center gap-1 group"
-              >
-                <Languages className="w-4 h-4 xl:w-5 xl:h-5 group-hover:rotate-12 transition-transform" />
-                <span className="text-[9px] xl:text-[10px] font-black uppercase tracking-wider">{language}</span>
-              </button>
-              {langPickerOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl overflow-hidden z-50 animate-scale-in">
-                  <div className="max-h-60 overflow-y-auto custom-scrollbar">
+          {/* Language Picker Modal for Mobile */}
+          {
+            langPickerOpen && (
+              <div className="lg:hidden fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-6">
+                <div className="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[2.5rem] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-2xl">
+                  <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                    <h3 className="font-black uppercase tracking-widest text-xs text-slate-400">Select Language</h3>
+                    <button onClick={() => setLangPickerOpen(false)}><X className="w-6 h-6 dark:text-white" /></button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 p-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
                     {Object.entries(LANGUAGES).map(([code, config]) => (
                       <button
                         key={code}
                         onClick={() => handleLanguageChange(code as Language)}
-                        className={`w-full px-4 py-3 text-left text-xs font-black flex items-center gap-3 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors uppercase tracking-widest ${language === code ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30' : 'text-slate-600 dark:text-slate-400'
+                        className={`p-4 rounded-2xl text-left border-2 transition-all flex flex-col gap-2 ${language === code
+                          ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30'
+                          : 'border-slate-100 dark:border-slate-800 hover:border-slate-200'
                           }`}
                       >
-                        <span className="text-base leading-none">{config.flag}</span>
-                        {config.name}
+                        <span className="text-2xl">{config.flag}</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white">{config.name}</span>
                       </button>
                     ))}
                   </div>
                 </div>
-              )}
-            </div>
-
-            <button
-              onClick={toggleTheme}
-              className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-xl"
-            >
-              {isDark ? <Sun className="w-4 h-4 xl:w-5 xl:h-5" /> : <Moon className="w-4 h-4 xl:w-5 xl:h-5" />}
-            </button>
-
-            <div className="w-px h-5 bg-slate-200 dark:bg-slate-800 mx-1"></div>
-
-            {/* Auth Button with Interactive Tooltip */}
-            {user ? (
-              <div className="relative group">
-                <button className="flex items-center gap-1.5 px-2.5 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-xl transition-all">
-                  <User className="w-3.5 h-3.5 xl:w-4 xl:h-4 text-indigo-600 dark:text-indigo-400" />
-                  <span className="text-[10px] xl:text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-wider max-w-[80px] xl:max-w-[100px] truncate">
-                    {user.email?.split('@')[0]}
-                  </span>
-                </button>
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                  <button
-                    onClick={() => signOut()}
-                    className="w-full px-4 py-3 text-left text-xs font-black flex items-center gap-3 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors text-red-600 dark:text-red-400 uppercase tracking-widest"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Sign Out
-                  </button>
-                </div>
               </div>
-            ) : (
-              <div
-                className="relative"
-                onMouseEnter={() => setShowLoginTooltip(true)}
-                onMouseLeave={() => setShowLoginTooltip(false)}
-              >
-                <button
-                  onClick={() => {
-                    setShowAuthModal(true);
-                    setShowLoginTooltip(false);
-                  }}
-                  className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-black uppercase tracking-wider transition-all shadow-lg shadow-indigo-500/20 text-[10px] xl:text-xs flex items-center gap-1.5"
-                >
-                  <User className="w-3.5 h-3.5 xl:w-4 xl:h-4" />
-                  <span className="hidden xl:inline">Login</span>
-                </button>
+            )
+          }
 
-                {/* Get Started Tooltip */}
-                {showLoginTooltip && (
-                  <div className="absolute bottom-full right-0 mb-3 w-64 animate-scale-in">
-                    <div className="relative bg-gradient-to-br from-emerald-500 to-indigo-600 p-[2px] rounded-2xl shadow-2xl">
-                      <div className="bg-white dark:bg-slate-900 rounded-2xl p-4">
-                        <div className="flex items-start gap-3 mb-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0 animate-pulse">
-                            <Rocket className="w-5 h-5 text-white" />
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="text-sm font-black text-slate-900 dark:text-white mb-1">
-                              Join 10,000+ GAT Strategists
-                            </h4>
-                            <p className="text-xs text-slate-600 dark:text-slate-400">
-                              Start turning AI tools into profit machines today!
-                            </p>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => {
-                            setShowAuthModal(true);
-                            setShowLoginTooltip(false);
-                          }}
-                          className="w-full px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-black rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 text-xs uppercase tracking-wider"
-                        >
-                          <Rocket className="w-4 h-4" />
-                          Get Started Free
-                          <ArrowRight className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                    {/* Arrow */}
-                    <div className="absolute -bottom-2 right-4 w-4 h-4 bg-white dark:bg-slate-900 transform rotate-45 border-r-2 border-b-2 border-emerald-500"></div>
-                  </div>
-                )}
-              </div>
-            )}
-          </nav>
+          <main className="container mx-auto px-6 py-12 pb-32">
+            {activeTab === TabView.DASHBOARD && renderDashboard()}
+            {activeTab === TabView.WHY_GAT && <WhyUs />}
+            {activeTab === TabView.LEARN && renderLearn()}
+            {activeTab === TabView.GENERATOR && <GigGenerator onCoachRequest={startCoachConversation} onNavigateToTab={setActiveTab} language={language} />}
+            {activeTab === TabView.VIDEO && <VideoGenerator />}
+            {activeTab === TabView.IMAGE && <ImageEditor />}
+            {activeTab === TabView.MY_PLANS && <MyPlans onCoachRequest={startCoachConversation} />}
+            {activeTab === TabView.COACH && renderCoach()}
+            {activeTab === TabView.PRICING && <Pricing />}
+            {activeTab === TabView.BUSINESS_INTEL && <BusinessIntelligence onNavigateToTab={setActiveTab} />}
+          </main>
 
-          <div className="lg:hidden flex items-center gap-2">
-            {/* Language Toggle for Mobile */}
-            <button
-              onClick={() => { setLangPickerOpen(!langPickerOpen); setMobileMenuOpen(false); }}
-              className="p-3 bg-slate-100 dark:bg-slate-900 rounded-xl text-slate-900 dark:text-slate-300 flex items-center gap-2"
-            >
-              <Languages className="w-5 h-5" />
-              <span className="text-[10px] font-black">{language}</span>
-            </button>
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-3 bg-slate-100 dark:bg-slate-900 rounded-xl text-slate-900 dark:text-slate-300">
-              {mobileMenuOpen ? <X /> : <Menu />}
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-white dark:bg-slate-950 p-8 flex flex-col gap-6 animate-fade-in overflow-y-auto">
-          <div className="flex justify-between items-center mb-10">
-            <div className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">GATSMONEY_MENU</div>
-            <button onClick={() => setMobileMenuOpen(false)} className="p-2 bg-slate-100 dark:bg-slate-900 rounded-full"><X className="w-8 h-8 dark:text-white" /></button>
-          </div>
-          {[
-            { id: TabView.DASHBOARD, label: t.nav.home, icon: LayoutDashboard },
-            { id: TabView.LEARN, label: t.nav.learn, icon: BookOpen },
-            { id: TabView.GENERATOR, label: t.nav.jobs, icon: Zap },
-            { id: TabView.COACH, label: t.nav.coach, icon: Bot },
-            { id: TabView.MY_PLANS, label: t.nav.plans, icon: Bookmark },
-            { id: TabView.IMAGE, label: t.nav.image, icon: ImageIcon },
-            { id: TabView.PRICING, label: t.nav.pricing, icon: CreditCard },
-            { id: TabView.VIDEO, label: t.nav.video, icon: Film },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => { setActiveTab(item.id); setMobileMenuOpen(false); }}
-              className={`w-full py-6 text-3xl font-black text-left border-b border-slate-200 dark:border-slate-800 flex items-center justify-between ${activeTab === item.id ? 'text-emerald-500' : 'text-slate-900 dark:text-white uppercase tracking-tighter'}`}
-            >
-              {item.label}
-              <item.icon className="w-10 h-10" />
-            </button>
-          ))}
-        </div>
+          <Footer onNavigate={setActiveTab} />
+          <HelpChatbot />
+        </>
       )}
-
-      {/* Language Picker Modal for Mobile */}
-      {langPickerOpen && (
-        <div className="lg:hidden fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-6">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[2.5rem] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-2xl">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
-              <h3 className="font-black uppercase tracking-widest text-xs text-slate-400">Select Language</h3>
-              <button onClick={() => setLangPickerOpen(false)}><X className="w-6 h-6 dark:text-white" /></button>
-            </div>
-            <div className="grid grid-cols-2 gap-2 p-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
-              {Object.entries(LANGUAGES).map(([code, config]) => (
-                <button
-                  key={code}
-                  onClick={() => handleLanguageChange(code as Language)}
-                  className={`p-4 rounded-2xl text-left border-2 transition-all flex flex-col gap-2 ${language === code
-                    ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30'
-                    : 'border-slate-100 dark:border-slate-800 hover:border-slate-200'
-                    }`}
-                >
-                  <span className="text-2xl">{config.flag}</span>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white">{config.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      <main className="container mx-auto px-6 py-12 pb-32">
-        {activeTab === TabView.DASHBOARD && renderDashboard()}
-        {activeTab === TabView.WHY_GAT && <WhyUs />}
-        {activeTab === TabView.LEARN && renderLearn()}
-        {activeTab === TabView.GENERATOR && <GigGenerator onCoachRequest={startCoachConversation} onNavigateToTab={setActiveTab} language={language} />}
-        {activeTab === TabView.VIDEO && <VideoGenerator />}
-        {activeTab === TabView.IMAGE && <ImageEditor />}
-        {activeTab === TabView.MY_PLANS && <MyPlans onCoachRequest={startCoachConversation} />}
-        {activeTab === TabView.COACH && renderCoach()}
-        {activeTab === TabView.PRICING && <Pricing />}
-      </main>
-
-      <Footer onNavigate={setActiveTab} />
-      <HelpChatbot />
-    </div>
+    </div >
   );
 };
 

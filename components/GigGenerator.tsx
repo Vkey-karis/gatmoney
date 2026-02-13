@@ -198,8 +198,8 @@ const GigGenerator: React.FC<GigGeneratorProps> = ({ onCoachRequest, onNavigateT
               onClick={handleGenerate}
               disabled={loading || !skills || !interests || scanCount >= MAX_SCANS}
               className={`w-full py-5 px-4 rounded-2xl flex items-center justify-center gap-3 font-black text-white transition-all transform hover:scale-[1.02] uppercase tracking-widest ${loading || scanCount >= MAX_SCANS
-                  ? 'bg-slate-400 dark:bg-slate-600 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-emerald-600 to-indigo-600 shadow-xl shadow-emerald-500/20'
+                ? 'bg-slate-400 dark:bg-slate-600 cursor-not-allowed'
+                : 'bg-gradient-to-r from-emerald-600 to-indigo-600 shadow-xl shadow-emerald-500/20'
                 }`}
             >
               {loading ? <Loader2 className="animate-spin" /> : <Globe className="w-5 h-5" />}
@@ -219,6 +219,30 @@ const GigGenerator: React.FC<GigGeneratorProps> = ({ onCoachRequest, onNavigateT
                   <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-tight">{result.gigTitle}</h3>
                   <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-black">
                     <DollarSign className="w-5 h-5" /> {result.estimatedEarnings}
+                  </div>
+                </div>
+
+                {/* New Metrics Dashboard */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-8 pt-6">
+                  <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl text-center border border-slate-100 dark:border-slate-700/50">
+                    <div className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Confidence</div>
+                    <div className="text-xl font-black text-emerald-500">{result.marketConfidence || 8}/10</div>
+                  </div>
+                  <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl text-center border border-slate-100 dark:border-slate-700/50">
+                    <div className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Competition</div>
+                    <div className={`text-xl font-black ${result.competitionDensity === 'High' ? 'text-red-500' : 'text-indigo-500'}`}>
+                      {result.competitionDensity || 'Medium'}
+                    </div>
+                  </div>
+                  <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl text-center border border-slate-100 dark:border-slate-700/50">
+                    <div className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">AI Leverage</div>
+                    <div className="text-xl font-black text-purple-500">{result.aiLeverageScore || 9}/10</div>
+                  </div>
+                  <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl text-center border border-slate-100 dark:border-slate-700/50">
+                    <div className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Pricing</div>
+                    <div className="text-xs font-bold text-slate-600 dark:text-slate-300">
+                      {result.pricingBands?.mid || '$50 - $150'}
+                    </div>
                   </div>
                 </div>
 

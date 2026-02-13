@@ -1,7 +1,7 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 import { SYSTEM_INSTRUCTION_BASE } from '../constants';
-import { GeneratedGig, Language } from '../types';
+import { GeneratedGig, Language, BusinessReport } from '../types';
 
 /**
  * Strict adherence to SDK rules.
@@ -105,6 +105,10 @@ export interface GeneratedGigWithSources extends GeneratedGig {
   sources?: { title: string; uri: string }[];
 }
 
+export interface BusinessReportWithSources extends BusinessReport {
+  sources?: { title: string; uri: string }[];
+}
+
 /**
  * GAT Strategy Generation - Uses Search Grounding to find high-value gaps.
  */
@@ -149,9 +153,20 @@ export const generateGATStrategy = async (
               type: Type.ARRAY,
               items: { type: Type.STRING }
             },
-            estimatedEarnings: { type: Type.STRING }
+            estimatedEarnings: { type: Type.STRING },
+            pricingBands: {
+              type: Type.OBJECT,
+              properties: {
+                low: { type: Type.STRING },
+                mid: { type: Type.STRING },
+                high: { type: Type.STRING }
+              }
+            },
+            competitionDensity: { type: Type.STRING, enum: ['Low', 'Medium', 'High'] },
+            aiLeverageScore: { type: Type.NUMBER },
+            marketConfidence: { type: Type.NUMBER }
           },
-          required: ["gigTitle", "actionPlan", "recommendedTools", "estimatedEarnings"]
+          required: ["gigTitle", "actionPlan", "recommendedTools", "estimatedEarnings", "pricingBands", "competitionDensity", "aiLeverageScore", "marketConfidence"]
         }
       }
     });
@@ -168,6 +183,92 @@ export const generateGATStrategy = async (
 
   } catch (error) {
     console.error("Generation Error:", error);
+    return null;
+  }
+};
+
+/**
+ * Business Intelligence Generation
+ */
+export const generateBusinessIntelligence = async (
+  industry: string,
+  region: string,
+  goals: string
+): Promise<BusinessReportWithSources | null> => {
+  const ai = getClient();
+  const currentYear = new Date().getFullYear();
+
+  const prompt = `
+    Analyze the ${industry} industry in ${region} for ${currentYear}.
+    Strategic Goals: ${goals}.
+    
+    Identify:
+    1. Underserved Service Gaps.
+    2. Specific Competitor Weaknesses.
+    3. High-ROI Automation Opportunities.
+    4. Revenue Expansion Ideas.
+    5. A 90-Day Implementation Roadmap.
+    
+    USE GOOGLE SEARCH to find real-time market data.
+    Return JSON matching the schema.
+    Translate to language code: EN.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: prompt,
+      config: {
+        systemInstruction: SYSTEM_INSTRUCTION_BASE,
+        tools: [{ googleSearch: {} }],
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            industry: { type: Type.STRING },
+            region: { type: Type.STRING },
+            serviceGaps: { type: Type.ARRAY, items: { type: Type.STRING } },
+            competitorWeaknesses: { type: Type.ARRAY, items: { type: Type.STRING } },
+            automationOpportunities: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  area: { type: Type.STRING },
+                  tool: { type: Type.STRING },
+                  estimatedRoi: { type: Type.STRING }
+                }
+              }
+            },
+            revenueExpansion: { type: Type.ARRAY, items: { type: Type.STRING } },
+            implementationRoadmap: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  phase: { type: Type.STRING },
+                  actions: { type: Type.ARRAY, items: { type: Type.STRING } }
+                }
+              }
+            },
+            marketConfidence: { type: Type.NUMBER },
+            trendDirection: { type: Type.STRING, enum: ['Up', 'Down', 'Stable'] }
+          }
+        }
+      }
+    });
+
+    if (response.text) {
+      const report = JSON.parse(response.text.trim()) as BusinessReport;
+      const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
+        ?.filter(chunk => chunk.web)
+        ?.map(chunk => ({ title: chunk.web.title, uri: chunk.web.uri })) || [];
+
+      return { ...report, sources: sources.length > 0 ? sources : undefined };
+    }
+    return null;
+  } catch (error) {
+    console.error("Business Intel Error:", error);
     return null;
   }
 };

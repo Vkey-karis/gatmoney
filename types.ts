@@ -22,6 +22,26 @@ export interface GeneratedGig {
   dateCreated?: string;
   personalNote?: string;
   tags?: string[];
+  // New metrics for Engine A
+  pricingBands?: { low: string; mid: string; high: string };
+  competitionDensity?: 'Low' | 'Medium' | 'High';
+  aiLeverageScore?: number; // 1-10
+  marketConfidence?: number; // 1-10
+}
+
+export type UserMode = 'FREELANCER' | 'BUSINESS';
+
+export interface BusinessReport {
+  industry: string;
+  region: string;
+  serviceGaps: string[];
+  competitorWeaknesses: string[];
+  automationOpportunities: { area: string; tool: string; estimatedRoi: string }[];
+  revenueExpansion: string[];
+  implementationRoadmap: { phase: string; actions: string[] }[];
+  marketConfidence: number;
+  trendDirection: 'Up' | 'Down' | 'Stable';
+  dateCreated?: string;
 }
 
 export enum TabView {
@@ -33,7 +53,8 @@ export enum TabView {
   COACH = 'COACH',
   MY_PLANS = 'MY_PLANS',
   WHY_GAT = 'WHY_GAT',
-  PRICING = 'PRICING'
+  PRICING = 'PRICING',
+  BUSINESS_INTEL = 'BUSINESS_INTEL'
 }
 
 export type Language = 'EN' | 'ES' | 'FR' | 'DE' | 'ZH' | 'JA' | 'KO' | 'PT' | 'HI' | 'AR';

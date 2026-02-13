@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Zap, Bot, Bookmark, Briefcase, Wrench, Equal, Search, TrendingUp, Activity, Globe, Stars } from 'lucide-react';
+import { ArrowRight, Zap, Bot, Bookmark, Briefcase, Wrench, Equal, Search, TrendingUp, Activity, Globe, Stars, ImageIcon, Film } from 'lucide-react';
 import { UserProfile } from './UserProfile';
 
 interface AuthenticatedDashboardProps {
@@ -86,6 +86,61 @@ export const AuthenticatedDashboard: React.FC<AuthenticatedDashboardProps> = ({
                             My Saved Plans
                         </button>
                     </div>
+                </div>
+
+                {/* Quick Access Tools */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+                    <button
+                        onClick={() => onNavigate('IMAGE')}
+                        className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 hover:border-purple-500/50 rounded-2xl p-6 transition-all group text-left"
+                    >
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="p-2 bg-purple-500/10 rounded-xl group-hover:scale-110 transition-transform">
+                                <ImageIcon className="w-5 h-5 text-purple-500" />
+                            </div>
+                            <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase">Image Studio</h3>
+                        </div>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">Create graphics & visuals</p>
+                    </button>
+
+                    <button
+                        onClick={() => onNavigate('VIDEO')}
+                        className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 hover:border-pink-500/50 rounded-2xl p-6 transition-all group text-left"
+                    >
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="p-2 bg-pink-500/10 rounded-xl group-hover:scale-110 transition-transform">
+                                <Film className="w-5 h-5 text-pink-500" />
+                            </div>
+                            <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase">Video Automation</h3>
+                        </div>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">Generate & edit videos</p>
+                    </button>
+
+                    <button
+                        onClick={() => onNavigate('MY_PLANS')}
+                        className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 hover:border-amber-500/50 rounded-2xl p-6 transition-all group text-left"
+                    >
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="p-2 bg-amber-500/10 rounded-xl group-hover:scale-110 transition-transform">
+                                <Bookmark className="w-5 h-5 text-amber-500" />
+                            </div>
+                            <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase">My Plans</h3>
+                        </div>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">Saved strategies</p>
+                    </button>
+
+                    <button
+                        onClick={() => onNavigate('COACH')}
+                        className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 hover:border-indigo-500/50 rounded-2xl p-6 transition-all group text-left"
+                    >
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="p-2 bg-indigo-500/10 rounded-xl group-hover:scale-110 transition-transform">
+                                <Bot className="w-5 h-5 text-indigo-500" />
+                            </div>
+                            <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase">AI Coach</h3>
+                        </div>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">Strategy assistant</p>
+                    </button>
                 </div>
             </div>
 

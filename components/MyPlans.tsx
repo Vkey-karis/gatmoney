@@ -2,15 +2,38 @@
 import React, { useState, useEffect } from 'react';
 import { GeneratedGig } from '../types';
 import { PARTNER_LINKS, PartnerTool } from '../constants';
-import { Trash2, Copy, Check, DollarSign, Wrench, Calendar, AlertTriangle, MessageSquareText, ChevronRight, Download, Share2, ExternalLink, Tag, StickyNote, Info } from 'lucide-react';
+import { Trash2, Copy, Check, DollarSign, Wrench, Calendar, AlertTriangle, MessageSquareText, ChevronRight, Download, Share2, ExternalLink, Tag, StickyNote, Info, Lock } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 interface MyPlansProps {
   onCoachRequest: (msg: string) => void;
 }
 
 const MyPlans: React.FC<MyPlansProps> = ({ onCoachRequest }) => {
+  const { user } = useAuth();
   const [plans, setPlans] = useState<GeneratedGig[]>([]);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  // Auth Check
+  if (!user) {
+    return (
+      <div className="max-w-2xl mx-auto animate-fade-in text-center py-20">
+        <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-2 border-amber-500/30 rounded-3xl p-12">
+          <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Lock className="w-8 h-8 text-amber-500" />
+          </div>
+          <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3 uppercase">Authentication Required</h3>
+          <p className="text-slate-600 dark:text-slate-400 mb-6">Please log in to access your saved plans.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-8 py-4 bg-amber-600 hover:bg-amber-500 text-white font-black rounded-2xl transition-all uppercase tracking-widest text-sm"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     const saved = localStorage.getItem('gat_saved_plans');

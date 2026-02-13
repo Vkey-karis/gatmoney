@@ -1,15 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { generateVideo } from '../services/geminiService';
 import { VIDEO_TEMPLATES } from '../constants';
-import { Film, Loader2, PlayCircle, AlertCircle, LayoutTemplate, Sparkles, Copy, Check } from 'lucide-react';
+import { Film, Loader2, PlayCircle, AlertCircle, LayoutTemplate, Sparkles, Copy, Check, Lock } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const VideoGenerator: React.FC = () => {
+  const { user } = useAuth();
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeTemplate, setActiveTemplate] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+
+  // Auth Check
+  if (!user) {
+    return (
+      <div className="max-w-2xl mx-auto animate-fade-in text-center py-20">
+        <div className="bg-gradient-to-br from-pink-500/10 to-purple-500/10 border-2 border-pink-500/30 rounded-3xl p-12">
+          <div className="w-16 h-16 bg-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Lock className="w-8 h-8 text-pink-500" />
+          </div>
+          <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3 uppercase">Authentication Required</h3>
+          <p className="text-slate-600 dark:text-slate-400 mb-6">Please log in to access the Video Automation Studio.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-8 py-4 bg-pink-600 hover:bg-pink-500 text-white font-black rounded-2xl transition-all uppercase tracking-widest text-sm"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Cleanup Blob URL on unmount or when URL changes
   useEffect(() => {
@@ -62,7 +85,7 @@ const VideoGenerator: React.FC = () => {
       </div>
 
       <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
-        
+
         {/* Templates Section */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">
@@ -74,11 +97,10 @@ const VideoGenerator: React.FC = () => {
               <button
                 key={t.id}
                 onClick={() => applyTemplate(t)}
-                className={`p-3 rounded-lg border text-left transition-all group relative overflow-hidden ${
-                  activeTemplate === t.id 
-                  ? 'bg-red-500/10 border-red-500/50 text-white' 
-                  : 'bg-slate-900/50 border-slate-700 text-slate-400 hover:bg-slate-700 hover:border-slate-500 hover:text-white'
-                }`}
+                className={`p-3 rounded-lg border text-left transition-all group relative overflow-hidden ${activeTemplate === t.id
+                    ? 'bg-red-500/10 border-red-500/50 text-white'
+                    : 'bg-slate-900/50 border-slate-700 text-slate-400 hover:bg-slate-700 hover:border-slate-500 hover:text-white'
+                  }`}
               >
                 <div className="flex justify-between items-start mb-1">
                   <span className="font-semibold text-sm">{t.title}</span>
@@ -93,7 +115,7 @@ const VideoGenerator: React.FC = () => {
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <label className="block text-sm font-medium text-slate-300">Video Prompt / Script (Customize below)</label>
-            <button 
+            <button
               onClick={handleCopy}
               className="text-xs flex items-center gap-1 text-slate-400 hover:text-white transition-colors"
             >
@@ -119,11 +141,10 @@ const VideoGenerator: React.FC = () => {
         <button
           onClick={handleGenerate}
           disabled={loading || !prompt}
-          className={`w-full py-4 rounded-lg flex items-center justify-center gap-2 font-bold text-white transition-all ${
-            loading
+          className={`w-full py-4 rounded-lg flex items-center justify-center gap-2 font-bold text-white transition-all ${loading
               ? 'bg-slate-600 cursor-not-allowed'
               : 'bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 shadow-lg'
-          }`}
+            }`}
         >
           {loading ? (
             <>
@@ -145,18 +166,18 @@ const VideoGenerator: React.FC = () => {
             <PlayCircle className="text-red-500" /> Generated Result
           </h3>
           <div className="aspect-video w-full bg-black rounded-lg overflow-hidden relative border border-slate-800">
-             <video 
-               src={videoUrl} 
-               controls 
-               className="w-full h-full object-contain"
-               autoPlay
-               loop
-             />
+            <video
+              src={videoUrl}
+              controls
+              className="w-full h-full object-contain"
+              autoPlay
+              loop
+            />
           </div>
           <div className="mt-4 text-center">
-             <a href={videoUrl} download="GAT_Generated_Video.mp4" className="inline-flex items-center gap-2 px-6 py-2 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-full transition-colors">
-               <Film className="w-4 h-4" /> Download Video
-             </a>
+            <a href={videoUrl} download="GAT_Generated_Video.mp4" className="inline-flex items-center gap-2 px-6 py-2 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-full transition-colors">
+              <Film className="w-4 h-4" /> Download Video
+            </a>
           </div>
         </div>
       )}

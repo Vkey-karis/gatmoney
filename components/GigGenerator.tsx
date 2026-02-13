@@ -4,6 +4,7 @@ import { GeneratedGigWithSources } from '../services/geminiService';
 import { generateGATStrategy } from '../services/geminiService';
 import { Language, TabView } from '../types';
 import { useSubscription } from '../context/SubscriptionContext';
+import { useAuth } from '../context/AuthContext';
 import { PARTNER_LINKS, PartnerTool } from '../constants';
 import { Loader2, Sparkles, CheckCircle, ChevronRight, Wrench, DollarSign, Save, Copy, Check, MessageSquareText, Globe, ExternalLink, Bot, Download, Share2, Link, ShieldCheck, ArrowUpRight, Zap, Tag, StickyNote, Info, LayoutDashboard, AlertTriangle, CreditCard, Coins, Rocket, Lock } from 'lucide-react';
 
@@ -16,6 +17,7 @@ interface GigGeneratorProps {
 const MAX_SCANS = 50; // Deprecated, using context
 
 const GigGenerator: React.FC<GigGeneratorProps> = ({ onCoachRequest, onNavigateToTab, language = 'EN' }) => {
+  const { user } = useAuth();
   const { scansUsed, maxScans, incrementScans, tier } = useSubscription();
   const [skills, setSkills] = useState('');
   const [interests, setInterests] = useState('');
@@ -32,10 +34,17 @@ const GigGenerator: React.FC<GigGeneratorProps> = ({ onCoachRequest, onNavigateT
   const handleGenerate = async () => {
     if (!skills.trim() || !interests.trim()) return;
 
+    // Auth Check
+    if (!user) {
+      alert('Please log in to generate gig strategies.');
+      onNavigateToTab?.(TabView.DASHBOARD); // Redirect to trigger auth modal
+      return;
+    }
+
     // Check Limit
     if (scansUsed >= maxScans) {
       // Allow visual feedback to handle the upgrade prompt in UI
-      return; 
+      return;
     }
 
     setLoading(true);
@@ -215,11 +224,11 @@ const GigGenerator: React.FC<GigGeneratorProps> = ({ onCoachRequest, onNavigateT
                 {/* New Metrics Dashboard - Blurred for Free Tier */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-8 pt-6 relative group cursor-pointer" onClick={() => tier === 'FREE' && onNavigateToTab?.(TabView.PRICING)}>
                   {tier === 'FREE' && (
-                     <div className="absolute inset-0 bg-slate-100/50 dark:bg-slate-900/50 backdrop-blur-sm z-10 flex items-center justify-center rounded-2xl border-2 border-dashed border-emerald-500/50">
-                        <div className="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg flex items-center gap-2">
-                           <Lock className="w-3 h-3" /> Upgrade to View Metrics
-                        </div>
-                     </div>
+                    <div className="absolute inset-0 bg-slate-100/50 dark:bg-slate-900/50 backdrop-blur-sm z-10 flex items-center justify-center rounded-2xl border-2 border-dashed border-emerald-500/50">
+                      <div className="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg flex items-center gap-2">
+                        <Lock className="w-3 h-3" /> Upgrade to View Metrics
+                      </div>
+                    </div>
                   )}
                   <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl text-center border border-slate-100 dark:border-slate-700/50">
                     <div className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Confidence</div>

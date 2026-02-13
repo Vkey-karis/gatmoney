@@ -35,9 +35,9 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     // Limits Definitions
     const LIMITS = {
-        FREE: { scans: 3, reports: 0 },
-        PRO: { scans: 1000, reports: 0 }, // Effectively unlimited scans
-        BUSINESS: { scans: 1000, reports: 1000 },
+        FREE: { scans: 10, reports: 0 },
+        PRO: { scans: 30, reports: 0 },
+        BUSINESS: { scans: 30, reports: 1000 }, // Same as PRO for scans
     };
 
     useEffect(() => {

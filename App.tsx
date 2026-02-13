@@ -60,6 +60,7 @@ import Footer from './components/Footer';
 import WhyUs from './components/WhyUs';
 import LandingPage from './components/LandingPage';
 import BusinessIntelligence from './components/BusinessIntelligence';
+import MarketGapFinder from './components/MarketGapFinder';
 import OnboardingModal from './components/OnboardingModal';
 import AuthModal from './components/AuthModal';
 import Pricing from './components/Pricing';
@@ -641,7 +642,11 @@ const App: React.FC = () => {
               {activeTab === TabView.DASHBOARD && renderDashboard()}
               {activeTab === TabView.WHY_GAT && <WhyUs />}
               {activeTab === TabView.LEARN && renderLearn()}
-              {activeTab === TabView.GENERATOR && <GigGenerator onCoachRequest={startCoachConversation} onNavigateToTab={setActiveTab} language={language} />}
+              {activeTab === TabView.GENERATOR && (
+                userMode === 'BUSINESS'
+                  ? <MarketGapFinder onNavigateToTab={setActiveTab} />
+                  : <GigGenerator onCoachRequest={startCoachConversation} onNavigateToTab={setActiveTab} language={language} />
+              )}
               {activeTab === TabView.VIDEO && <VideoGenerator />}
               {activeTab === TabView.IMAGE && <ImageEditor />}
               {activeTab === TabView.MY_PLANS && <MyPlans onCoachRequest={startCoachConversation} />}

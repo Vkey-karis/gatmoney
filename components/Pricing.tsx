@@ -15,10 +15,10 @@ const Pricing: React.FC = () => {
       id: 'FREE',
       name: "Starter",
       price: "$0",
-      desc: "Perfect for finding your first few opportunities.",
-      icon: <Search className="w-8 h-8 text-slate-400" />,
+      desc: "Perfect for exploring opportunities.",
+      icon: <Search className="w-6 h-6 text-slate-400" />,
       features: [
-        "3 GAT Market Scans / Day",
+        "10 Market Scans / Month",
         "Standard AI Coach Access",
         "Basic Market Metrics",
         "Manual Gig Tracking"
@@ -30,12 +30,12 @@ const Pricing: React.FC = () => {
     {
       id: 'PRO',
       name: "Pro Freelancer",
-      price: "$29",
+      price: "$19",
       period: "/mo",
-      desc: "Unlimited power for serious gig workers.",
-      icon: <Zap className="w-8 h-8 text-emerald-500" />,
+      desc: "For serious freelancers and creators.",
+      icon: <Zap className="w-6 h-6 text-emerald-500" />,
       features: [
-        "Unlimited GAT Market Scans",
+        "30 Market Scans / Month",
         "Advanced Metrics (Pricing, Competition)",
         "AI Leverage Scores",
         "Deep Thinking Coach",
@@ -113,8 +113,8 @@ const Pricing: React.FC = () => {
           <div
             key={idx}
             className={`relative p-8 rounded-[2.5rem] bg-white dark:bg-slate-900 border-2 transition-all duration-300 flex flex-col ${plan.featured
-                ? 'border-emerald-500 shadow-[0_20px_50px_rgba(16,185,129,0.1)] scale-105 z-10'
-                : 'border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-xl'
+              ? 'border-emerald-500 shadow-[0_20px_50px_rgba(16,185,129,0.1)] scale-105 z-10'
+              : 'border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-xl'
               }`}
           >
             {plan.featured && (
@@ -149,10 +149,10 @@ const Pricing: React.FC = () => {
               disabled={plan.id === tier || (plan.id === 'FREE' && tier !== 'FREE') || isProcessing}
               onClick={() => handlePayment(plan.id)}
               className={`w-full py-4 rounded-2xl font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${plan.id === tier
-                  ? 'bg-slate-50 dark:bg-slate-800 text-emerald-500 cursor-default border border-emerald-500/20'
-                  : plan.featured
-                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
-                    : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white'
+                ? 'bg-slate-50 dark:bg-slate-800 text-emerald-500 cursor-default border border-emerald-500/20'
+                : plan.featured
+                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
+                  : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white'
                 }`}
             >
               {isProcessing && selectedPlan === plan.id ? (

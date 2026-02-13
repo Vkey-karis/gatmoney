@@ -563,7 +563,7 @@ const App: React.FC = () => {
 
                 <div className="lg:hidden flex items-center gap-2">
                   <button
-                    onClick={() => { setUserMode(null); mapModeToTab(null); }}
+                    onClick={() => { setUserMode(null); setActiveTab(TabView.DASHBOARD); }}
                     className="p-3 bg-slate-100 dark:bg-slate-900 rounded-xl text-slate-900 dark:text-slate-300"
                   >
                     <TrendingUp className="w-5 h-5" />

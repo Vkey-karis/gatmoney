@@ -400,7 +400,7 @@ const App: React.FC = () => {
           <LandingPage onSelectMode={handleModeSelect} />
         ) : (
           <>
-            <OnboardingModal isOpen={showOnboarding} onClose={handleCloseOnboarding} />
+            <OnboardingModal isOpen={showOnboarding} onClose={handleCloseOnboarding} mode={userMode || 'FREELANCER'} />
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
 
             {/* Welcome Message */}

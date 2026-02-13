@@ -295,7 +295,29 @@ const App: React.FC = () => {
     </div>
   );
 
-  const renderCoach = () => (
+  const renderCoach = () => {
+    // Auth Check
+    if (!user) {
+      return (
+        <div className="max-w-2xl mx-auto animate-fade-in text-center py-20">
+          <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border-2 border-indigo-500/30 rounded-3xl p-12">
+            <div className="w-16 h-16 bg-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Bot className="w-8 h-8 text-indigo-500" />
+            </div>
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3 uppercase">Authentication Required</h3>
+            <p className="text-slate-600 dark:text-slate-400 mb-6">Please log in to access the AI Strategy Coach.</p>
+            <button
+              onClick={() => setShowAuthModal(true)}
+              className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-2xl transition-all uppercase tracking-widest text-sm"
+            >
+              Go to Login
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
     <div className="max-w-4xl mx-auto h-[700px] flex flex-col bg-white dark:bg-slate-900 rounded-[3rem] border-2 border-slate-200 dark:border-slate-800 shadow-3xl overflow-hidden animate-fade-in">
       {/* Coach Header */}
       <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
@@ -392,8 +414,10 @@ const App: React.FC = () => {
           </button>
         </div>
       </div>
+      </div>
     </div>
-  );
+    );
+  };
 
   return (
     <SubscriptionProvider>

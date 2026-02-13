@@ -196,7 +196,8 @@ const App: React.FC = () => {
   const handleModeSelect = (mode: 'FREELANCER' | 'BUSINESS') => {
     setUserMode(mode);
     localStorage.setItem('gat_user_mode', mode);
-    setActiveTab(TabView.DASHBOARD);
+    // Show auth modal instead of going directly to dashboard
+    setShowAuthModal(true);
   };
 
   const navItems = userMode === 'BUSINESS' ? [
@@ -256,6 +257,7 @@ const App: React.FC = () => {
     return (
       <UnauthenticatedDashboard
         onNavigate={(tab) => setActiveTab(tab as TabView)}
+        onShowAuth={() => setShowAuthModal(true)}
         language={language}
         t={t}
       />

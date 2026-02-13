@@ -4,12 +4,14 @@ import GATVisualizer from './GATVisualizer';
 
 interface UnauthenticatedDashboardProps {
     onNavigate: (tab: string) => void;
+    onShowAuth: () => void;
     language: string;
     t: any;
 }
 
 export const UnauthenticatedDashboard: React.FC<UnauthenticatedDashboardProps> = ({
     onNavigate,
+    onShowAuth,
     language,
     t
 }) => {
@@ -80,7 +82,7 @@ export const UnauthenticatedDashboard: React.FC<UnauthenticatedDashboardProps> =
                         </p>
                         <div className="flex flex-wrap gap-3 sm:gap-5">
                             <button
-                                onClick={() => onNavigate('GENERATOR')}
+                                onClick={onShowAuth}
                                 className="px-6 sm:px-10 py-4 sm:py-5 bg-emerald-600 hover:bg-emerald-500 text-white dark:text-slate-950 font-black rounded-2xl transition-all shadow-[0_20px_40px_rgba(5,150,105,0.3)] flex items-center gap-2 sm:gap-3 group text-base sm:text-lg"
                             >
                                 {t.hero.button} <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-2 transition-transform" />

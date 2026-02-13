@@ -158,10 +158,11 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const hasOnboarded = localStorage.getItem('gat_onboarded');
-    if (!hasOnboarded) {
+    // Only show onboarding if user is authenticated and hasn't seen it
+    if (user && !hasOnboarded) {
       setShowOnboarding(true);
     }
-  }, []);
+  }, [user]);
 
   // Auto-scroll chat
   useEffect(() => {

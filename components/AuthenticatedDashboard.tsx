@@ -13,8 +13,37 @@ export const AuthenticatedDashboard: React.FC<AuthenticatedDashboardProps> = ({
     userEmail,
     onNavigate
 }) => {
+    // Mode Management
+    const [userMode, setUserMode] = React.useState<'FREELANCER' | 'BUSINESS'>('FREELANCER');
+
+    React.useEffect(() => {
+        const storedMode = localStorage.getItem('gat_user_mode');
+        if (storedMode === 'BUSINESS') setUserMode('BUSINESS');
+    }, []);
+
+    const toggleMode = () => {
+        const newMode = userMode === 'FREELANCER' ? 'BUSINESS' : 'FREELANCER';
+        setUserMode(newMode);
+        localStorage.setItem('gat_user_mode', newMode);
+        // Force reload to update app context/nav (temporary fix until context refactor)
+        window.location.reload();
+    };
+
     return (
-        <div className="space-y-12 animate-fade-in">
+        <div className="space-y-12 animate-fade-in relative">
+            {/* Mode Switcher */}
+            <div className="absolute top-0 right-0 z-20">
+                <button
+                    onClick={toggleMode}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-black uppercase tracking-widest transition-all ${userMode === 'BUSINESS'
+                        ? 'bg-slate-900 border-indigo-500 text-indigo-400 hover:bg-slate-800'
+                        : 'bg-white border-emerald-500 text-emerald-600 hover:bg-slate-50'
+                        }`}
+                >
+                    {userMode === 'BUSINESS' ? <Activity className="w-4 h-4" /> : <Zap className="w-4 h-4" />}
+                    Switch to {userMode === 'BUSINESS' ? 'Freelancer' : 'Business'}
+                </button>
+            </div>
             {/* Personalized Hero */}
             <div className="relative overflow-hidden bg-gradient-to-br from-emerald-500/10 via-teal-500/10 to-indigo-500/10 dark:from-emerald-500/5 dark:via-teal-500/5 dark:to-indigo-500/5 border-2 border-emerald-200 dark:border-emerald-500/20 rounded-[3rem] p-8 md:p-16">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2"></div>
@@ -45,7 +74,8 @@ export const AuthenticatedDashboard: React.FC<AuthenticatedDashboardProps> = ({
                             className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white dark:text-slate-950 font-black rounded-2xl transition-all shadow-[0_20px_40px_rgba(5,150,105,0.3)] flex items-center gap-3 group text-base"
                         >
                             <Zap className="w-5 h-5" />
-                            Find New Gigs
+                            <Zap className="w-5 h-5" />
+                            {userMode === 'BUSINESS' ? 'Analyze Market Gaps' : 'Find New Gigs'}
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                         </button>
                         <button
@@ -70,9 +100,11 @@ export const AuthenticatedDashboard: React.FC<AuthenticatedDashboardProps> = ({
                             <Globe className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                            <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400">1,420</div>
+                            <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400">
+                                {userMode === 'BUSINESS' ? '85%' : '1,420'}
+                            </div>
                             <div className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                                New Gigs Today
+                                {userMode === 'BUSINESS' ? 'Market Confidence' : 'New Gigs Today'}
                             </div>
                         </div>
                     </div>
@@ -87,14 +119,16 @@ export const AuthenticatedDashboard: React.FC<AuthenticatedDashboardProps> = ({
                             <TrendingUp className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                            <div className="text-3xl font-black text-indigo-600 dark:text-indigo-400">+140%</div>
+                            <div className="text-3xl font-black text-indigo-600 dark:text-indigo-400">
+                                {userMode === 'BUSINESS' ? '12' : '+140%'}
+                            </div>
                             <div className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                                AI GAT Growth
+                                {userMode === 'BUSINESS' ? 'Competitors Tracked' : 'AI GAT Growth'}
                             </div>
                         </div>
                     </div>
                     <div className="text-xs text-slate-600 dark:text-slate-400">
-                        Video automation leading the way
+                        {userMode === 'BUSINESS' ? 'Real-time surveillance active' : 'Video automation leading the way'}
                     </div>
                 </div>
 
@@ -104,9 +138,11 @@ export const AuthenticatedDashboard: React.FC<AuthenticatedDashboardProps> = ({
                             <Activity className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                            <div className="text-3xl font-black text-amber-600 dark:text-amber-400">24/7</div>
+                            <div className="text-3xl font-black text-amber-600 dark:text-amber-400">
+                                {userMode === 'BUSINESS' ? '$450k' : '24/7'}
+                            </div>
                             <div className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                                AI Monitoring
+                                {userMode === 'BUSINESS' ? 'Gap Value Detected' : 'AI Monitoring'}
                             </div>
                         </div>
                     </div>

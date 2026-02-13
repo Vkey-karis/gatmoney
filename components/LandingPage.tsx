@@ -72,20 +72,19 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelectMode }) => {
                         </div>
                     </button>
                 </div>
-            </div>
 
-            {/* Login / Auth Options */}
-            <div className="mt-16 text-center animate-fade-in space-y-4">
-                <p className="text-slate-500 font-medium text-sm">Already have an account?</p>
-                <button
-                    onClick={() => onSelectMode('FREELANCER')} // Default to a mode to trigger entrance then auth
-                    className="text-emerald-500 hover:text-emerald-400 font-black uppercase tracking-widest text-sm border-b-2 border-transparent hover:border-emerald-500 transition-all pb-1"
-                >
-                    Login to Terminal
-                </button>
+                {/* Login / Auth Options */}
+                <div className="mt-16 text-center animate-fade-in space-y-4">
+                    <p className="text-slate-500 font-medium text-sm">Already have an account?</p>
+                    <button
+                        onClick={() => onSelectMode('FREELANCER')} // Default to a mode to trigger entrance then auth
+                        className="text-emerald-500 hover:text-emerald-400 font-black uppercase tracking-widest text-sm border-b-2 border-transparent hover:border-emerald-500 transition-all pb-1"
+                    >
+                        Login to Terminal
+                    </button>
+                </div>
             </div>
         </div>
-        </div >
     );
 };
 

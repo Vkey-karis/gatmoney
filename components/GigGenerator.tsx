@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { GeneratedGigWithSources } from '../services/geminiService';
 import { generateGATStrategy } from '../services/geminiService';
 import { Language, TabView } from '../types';
+import { useSubscription } from '../context/SubscriptionContext';
 import { PARTNER_LINKS, PartnerTool } from '../constants';
-import { Loader2, Sparkles, CheckCircle, ChevronRight, Wrench, DollarSign, Save, Copy, Check, MessageSquareText, Globe, ExternalLink, Bot, Download, Share2, Link, ShieldCheck, ArrowUpRight, Zap, Tag, StickyNote, Info, LayoutDashboard, AlertTriangle, CreditCard, Coins, Rocket } from 'lucide-react';
+import { Loader2, Sparkles, CheckCircle, ChevronRight, Wrench, DollarSign, Save, Copy, Check, MessageSquareText, Globe, ExternalLink, Bot, Download, Share2, Link, ShieldCheck, ArrowUpRight, Zap, Tag, StickyNote, Info, LayoutDashboard, AlertTriangle, CreditCard, Coins, Rocket, Lock } from 'lucide-react';
 
 interface GigGeneratorProps {
   onCoachRequest: (msg: string) => void;
@@ -12,38 +13,29 @@ interface GigGeneratorProps {
   language?: Language;
 }
 
-const MAX_SCANS = 50;
+const MAX_SCANS = 50; // Deprecated, using context
 
 const GigGenerator: React.FC<GigGeneratorProps> = ({ onCoachRequest, onNavigateToTab, language = 'EN' }) => {
+  const { scansUsed, maxScans, incrementScans, tier } = useSubscription();
   const [skills, setSkills] = useState('');
   const [interests, setInterests] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<GeneratedGigWithSources | null>(null);
   const [saved, setSaved] = useState(false);
-  const [scanCount, setScanCount] = useState(0);
 
   // Personalization state
   const [personalNote, setPersonalNote] = useState('');
   const [tagsInput, setTagsInput] = useState('');
 
-  useEffect(() => {
-    const today = new Date().toDateString();
-    const storedDate = localStorage.getItem('gat_scan_date');
-    if (storedDate !== today) {
-      localStorage.setItem('gat_scan_date', today);
-      localStorage.setItem('gat_scan_count', '0');
-      setScanCount(0);
-    } else {
-      const count = parseInt(localStorage.getItem('gat_scan_count') || '0');
-      setScanCount(count);
-    }
-  }, []);
+
 
   const handleGenerate = async () => {
     if (!skills.trim() || !interests.trim()) return;
 
-    if (scanCount >= MAX_SCANS) {
-      return;
+    // Check Limit
+    if (scansUsed >= maxScans) {
+      // Allow visual feedback to handle the upgrade prompt in UI
+      return; 
     }
 
     setLoading(true);
@@ -53,9 +45,7 @@ const GigGenerator: React.FC<GigGeneratorProps> = ({ onCoachRequest, onNavigateT
     const data = await generateGATStrategy(skills, interests, language as Language);
 
     if (data) {
-      const newCount = scanCount + 1;
-      setScanCount(newCount);
-      localStorage.setItem('gat_scan_count', newCount.toString());
+      incrementScans();
       setResult(data);
     }
     setLoading(false);
@@ -125,8 +115,8 @@ const GigGenerator: React.FC<GigGeneratorProps> = ({ onCoachRequest, onNavigateT
         <div className="flex gap-2">
           <div className="flex flex-col items-end mr-2">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Market Access</span>
-            <span className={`text-xs font-black uppercase ${scanCount >= MAX_SCANS ? 'text-red-500' : 'text-emerald-600 dark:text-emerald-400'}`}>
-              {scanCount} / {MAX_SCANS} SCANS USED
+            <span className={`text-xs font-black uppercase ${scansUsed >= maxScans ? 'text-red-500' : 'text-emerald-600 dark:text-emerald-400'}`}>
+              {scansUsed} / {maxScans >= 1000 ? '∞' : maxScans} SCANS USED
             </span>
           </div>
           {onNavigateToTab && (
@@ -140,7 +130,7 @@ const GigGenerator: React.FC<GigGeneratorProps> = ({ onCoachRequest, onNavigateT
         </div>
       </div>
 
-      {scanCount >= MAX_SCANS && (
+      {scansUsed >= maxScans && (
         <div className="mb-8 p-8 bg-gradient-to-br from-red-500/10 to-amber-500/10 border-2 border-amber-500/50 rounded-[2rem] flex flex-col items-center text-center gap-6 animate-scale-in">
           <div className="p-4 bg-amber-500/20 rounded-2xl">
             <AlertTriangle className="w-12 h-12 text-amber-500" />
@@ -148,7 +138,7 @@ const GigGenerator: React.FC<GigGeneratorProps> = ({ onCoachRequest, onNavigateT
           <div>
             <h4 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none">Market Access Limit Reached</h4>
             <p className="text-sm font-bold text-slate-500 dark:text-slate-400 max-w-md mx-auto mt-4">
-              You have reached your daily limit of {MAX_SCANS} AI machine scans. Unlock unlimited power or top-up your credits to continue searching for high-value gigs.
+              You have reached your limit of {maxScans} AI machine scans. Unlock unlimited power or top-up your credits to continue.
             </p>
           </div>
           <div className="flex flex-wrap justify-center gap-4 w-full max-w-lg">
@@ -179,7 +169,7 @@ const GigGenerator: React.FC<GigGeneratorProps> = ({ onCoachRequest, onNavigateT
                 placeholder="E.g. Video editing, Writing, Sales..."
                 value={skills}
                 onChange={(e) => setSkills(e.target.value)}
-                disabled={scanCount >= MAX_SCANS}
+                disabled={scansUsed >= maxScans}
               />
             </div>
             <div>
@@ -190,14 +180,14 @@ const GigGenerator: React.FC<GigGeneratorProps> = ({ onCoachRequest, onNavigateT
                 placeholder="E.g. Local Business, Crypto, Fashion..."
                 value={interests}
                 onChange={(e) => setInterests(e.target.value)}
-                disabled={scanCount >= MAX_SCANS}
+                disabled={scansUsed >= maxScans}
               />
             </div>
 
             <button
               onClick={handleGenerate}
-              disabled={loading || !skills || !interests || scanCount >= MAX_SCANS}
-              className={`w-full py-5 px-4 rounded-2xl flex items-center justify-center gap-3 font-black text-white transition-all transform hover:scale-[1.02] uppercase tracking-widest ${loading || scanCount >= MAX_SCANS
+              disabled={loading || !skills || !interests || scansUsed >= maxScans}
+              className={`w-full py-5 px-4 rounded-2xl flex items-center justify-center gap-3 font-black text-white transition-all transform hover:scale-[1.02] uppercase tracking-widest ${loading || scansUsed >= maxScans
                 ? 'bg-slate-400 dark:bg-slate-600 cursor-not-allowed'
                 : 'bg-gradient-to-r from-emerald-600 to-indigo-600 shadow-xl shadow-emerald-500/20'
                 }`}
@@ -222,8 +212,15 @@ const GigGenerator: React.FC<GigGeneratorProps> = ({ onCoachRequest, onNavigateT
                   </div>
                 </div>
 
-                {/* New Metrics Dashboard */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-8 pt-6">
+                {/* New Metrics Dashboard - Blurred for Free Tier */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-8 pt-6 relative group cursor-pointer" onClick={() => tier === 'FREE' && onNavigateToTab?.(TabView.PRICING)}>
+                  {tier === 'FREE' && (
+                     <div className="absolute inset-0 bg-slate-100/50 dark:bg-slate-900/50 backdrop-blur-sm z-10 flex items-center justify-center rounded-2xl border-2 border-dashed border-emerald-500/50">
+                        <div className="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg flex items-center gap-2">
+                           <Lock className="w-3 h-3" /> Upgrade to View Metrics
+                        </div>
+                     </div>
+                  )}
                   <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl text-center border border-slate-100 dark:border-slate-700/50">
                     <div className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Confidence</div>
                     <div className="text-xl font-black text-emerald-500">{result.marketConfidence || 8}/10</div>

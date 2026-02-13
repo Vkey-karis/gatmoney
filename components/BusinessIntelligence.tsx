@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { generateBusinessIntelligence, BusinessReportWithSources } from '../services/geminiService';
 import { TabView } from '../types';
-import { Loader2, Building, Globe, Target, BarChart, Activity, TrendingUp, AlertCircle, CheckCircle, ArrowRight, Save, Share2, FileText, Zap, ShieldCheck } from 'lucide-react';
+import { useSubscription } from '../context/SubscriptionContext';
+import { Loader2, Building, Globe, Target, BarChart, Activity, TrendingUp, AlertCircle, CheckCircle, ArrowRight, Save, Share2, FileText, Zap, ShieldCheck, Lock } from 'lucide-react';
 
 interface BusinessIntelligenceProps {
     onNavigateToTab?: (tab: TabView) => void;
 }
 
 const BusinessIntelligence: React.FC<BusinessIntelligenceProps> = ({ onNavigateToTab }) => {
+    const { tier } = useSubscription();
     const [industry, setIndustry] = useState('');
     const [region, setRegion] = useState('');
     const [goals, setGoals] = useState('');
@@ -15,6 +17,11 @@ const BusinessIntelligence: React.FC<BusinessIntelligenceProps> = ({ onNavigateT
     const [report, setReport] = useState<BusinessReportWithSources | null>(null);
 
     const handleAnalyze = async () => {
+        if (tier !== 'BUSINESS') {
+            onNavigateToTab?.(TabView.PRICING);
+            return;
+        }
+
         if (!industry || !goals) return;
         setLoading(true);
         setReport(null);
@@ -27,7 +34,25 @@ const BusinessIntelligence: React.FC<BusinessIntelligenceProps> = ({ onNavigateT
     };
 
     return (
-        <div className="max-w-6xl mx-auto animate-fade-in pb-20">
+        <div className="max-w-6xl mx-auto animate-fade-in pb-20 relative">
+            {tier !== 'BUSINESS' && (
+                <div className="absolute inset-0 z-50 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center rounded-[3rem]">
+                    <div className="w-20 h-20 bg-indigo-500 rounded-3xl flex items-center justify-center mb-6 shadow-2xl shadow-indigo-500/30">
+                        <Lock className="w-10 h-10 text-white" />
+                    </div>
+                    <h2 className="text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-4">Enterprise Access Required</h2>
+                    <p className="text-slate-600 dark:text-slate-400 font-medium max-w-xl mb-8">
+                        The Business Intelligence Engine is reserved for Business tier subscribers. Unlock deep gap analysis and automation ROI calculators.
+                    </p>
+                    <button
+                        onClick={() => onNavigateToTab?.(TabView.PRICING)}
+                        className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-500/20"
+                    >
+                        Upgrade to Business
+                    </button>
+                </div>
+            )}
+
             <div className="text-center mb-12">
                 <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-4">
                     Business Gap <span className="text-indigo-600 dark:text-indigo-400">Intelligence</span>
@@ -86,8 +111,8 @@ const BusinessIntelligence: React.FC<BusinessIntelligenceProps> = ({ onNavigateT
                             onClick={handleAnalyze}
                             disabled={loading || !industry || !goals}
                             className={`w-full py-4 rounded-xl font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg ${loading || !industry || !goals
-                                    ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'
-                                    : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-500/20'
+                                ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'
+                                : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-500/20'
                                 }`}
                         >
                             {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <Activity className="w-5 h-5" />}

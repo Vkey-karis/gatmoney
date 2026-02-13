@@ -100,7 +100,7 @@ export const UnauthenticatedDashboard: React.FC<UnauthenticatedDashboardProps> =
                         <div className="relative bg-white dark:bg-slate-900/80 border-2 border-slate-100 dark:border-slate-800 rounded-[3rem] p-10 shadow-3xl backdrop-blur-3xl animate-float">
                             <div className="flex justify-between items-center mb-8 border-b border-slate-100 dark:border-slate-800 pb-6">
                                 <div className="text-xs font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-2 tracking-[0.2em]">
-                                    <Search className="w-4 h-4" /> 2026_NEURAL_PULSE
+                                    <Search className="w-4 h-4" /> {new Date().getFullYear()}_NEURAL_PULSE
                                 </div>
                                 <div className="text-[10px] text-slate-400 font-mono uppercase tracking-widest font-black">
                                     SYNC_STATUS: 100%

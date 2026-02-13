@@ -38,8 +38,8 @@ const MyPlans: React.FC<MyPlansProps> = ({ onCoachRequest }) => {
 
   const getPartnerInfo = (toolName: string): PartnerTool | null => {
     const toolLower = toolName.toLowerCase();
-    const match = Object.keys(PARTNER_LINKS).find(key => 
-      toolLower.includes(key.toLowerCase()) || 
+    const match = Object.keys(PARTNER_LINKS).find(key =>
+      toolLower.includes(key.toLowerCase()) ||
       key.toLowerCase().includes(toolLower)
     );
     return match ? PARTNER_LINKS[match] : null;
@@ -89,7 +89,7 @@ ${plan.recommendedTools.join(', ')}
   const handleShare = async (plan: GeneratedGig) => {
     const shareData = {
       title: `AI Money Strategy: ${plan.gigTitle}`,
-      text: `I'm using this AI Money Strategy: ${plan.gigTitle}! Potential earnings: ${plan.estimatedEarnings}. Check out GATMONEY.com to find your own plan.`,
+      text: `I'm using this AI Money Strategy: ${plan.gigTitle}! Potential earnings: ${plan.estimatedEarnings}. Check out GATSMONEY.com to find your own plan.`,
       url: window.location.origin
     };
 
@@ -120,9 +120,9 @@ ${plan.recommendedTools.join(', ')}
           </h2>
           <p className="text-slate-500 dark:text-slate-400 font-medium">Your personal collection of search-grounded money strategies.</p>
         </div>
-        
+
         {plans.length > 0 && (
-          <button 
+          <button
             onClick={handleClearAll}
             className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/30 border border-slate-200 dark:border-slate-700 hover:border-red-500/50 text-slate-600 dark:text-slate-300 hover:text-red-500 dark:hover:text-red-400 rounded-lg text-sm font-black uppercase transition-all flex items-center gap-2"
           >
@@ -145,35 +145,35 @@ ${plan.recommendedTools.join(', ')}
                   <div className="max-w-[60%]">
                     <h3 className="text-xl font-black text-slate-900 dark:text-white mb-1 uppercase tracking-tight truncate">{plan.gigTitle}</h3>
                     <div className="flex flex-wrap gap-3 text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest mt-1">
-                       <span className="flex items-center gap-1"><DollarSign className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> {plan.estimatedEarnings}</span>
-                       <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {plan.dateCreated || 'Saved'}</span>
-                       {plan.tags && plan.tags.map((tag, tIdx) => (
-                         <span key={tIdx} className="flex items-center gap-1 px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded border border-indigo-100 dark:border-indigo-800/50">
-                           <Tag className="w-2.5 h-2.5" /> {tag}
-                         </span>
-                       ))}
+                      <span className="flex items-center gap-1"><DollarSign className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> {plan.estimatedEarnings}</span>
+                      <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {plan.dateCreated || 'Saved'}</span>
+                      {plan.tags && plan.tags.map((tag, tIdx) => (
+                        <span key={tIdx} className="flex items-center gap-1 px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded border border-indigo-100 dark:border-indigo-800/50">
+                          <Tag className="w-2.5 h-2.5" /> {tag}
+                        </span>
+                      ))}
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <button 
+                    <button
                       onClick={() => handleShare(plan)}
                       className="p-2 bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 rounded-lg text-slate-500 dark:text-slate-400 transition-colors border border-slate-200 dark:border-slate-600"
                     >
                       <Share2 className="w-4 h-4" />
                     </button>
-                    <button 
+                    <button
                       onClick={() => downloadPlan(plan)}
                       className="p-2 bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 rounded-lg text-slate-500 dark:text-slate-400 transition-colors border border-slate-200 dark:border-slate-600"
                     >
                       <Download className="w-4 h-4" />
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleCopy(plan, idx)}
                       className="flex items-center gap-1 px-3 py-1.5 bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 rounded-lg text-slate-500 dark:text-slate-400 transition-all border border-slate-200 dark:border-slate-600"
                     >
                       {copiedId === idx.toString() ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleDelete(idx)}
                       className="p-2 bg-slate-50 dark:bg-red-900/20 hover:bg-red-50 dark:hover:bg-red-900/40 rounded-lg text-slate-500 dark:text-red-400 transition-colors border border-slate-200 dark:border-slate-700 hover:border-red-500"
                     >
@@ -198,12 +198,12 @@ ${plan.recommendedTools.join(', ')}
                     <ul className="space-y-1">
                       {plan.actionPlan.map((step, i) => (
                         <li key={i} className="text-sm text-slate-700 dark:text-slate-300 flex gap-2 font-bold">
-                           <span className="text-emerald-600 dark:text-emerald-500 font-mono text-xs">{i+1}.</span> {step}
+                          <span className="text-emerald-600 dark:text-emerald-500 font-mono text-xs">{i + 1}.</span> {step}
                         </li>
                       ))}
                     </ul>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <Wrench className="w-3 h-3 text-indigo-500" />
@@ -214,7 +214,7 @@ ${plan.recommendedTools.join(', ')}
                         const partner = getPartnerInfo(tool);
                         return partner ? (
                           <div key={i} className="group/tool relative">
-                            <a 
+                            <a
                               href={partner.url}
                               target="_blank"
                               rel="noopener noreferrer"
@@ -223,7 +223,7 @@ ${plan.recommendedTools.join(', ')}
                               {tool} <ExternalLink className="w-2.5 h-2.5" />
                             </a>
                             <div className="absolute bottom-full left-0 mb-2 w-48 p-2 bg-slate-900 text-white rounded-lg text-[10px] opacity-0 pointer-events-none group-hover/tool:opacity-100 transition-opacity z-20 shadow-xl border border-slate-700">
-                               {partner.description}
+                              {partner.description}
                             </div>
                           </div>
                         ) : (
@@ -236,8 +236,8 @@ ${plan.recommendedTools.join(', ')}
                   </div>
                 </div>
               </div>
-              
-              <button 
+
+              <button
                 onClick={() => handleAskCoach(plan)}
                 className="bg-slate-50/50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-900/80 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700 p-6 flex flex-col items-center justify-center gap-3 transition-all group md:w-48"
               >

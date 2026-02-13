@@ -116,7 +116,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     setMessages([
-      { role: 'model', text: language === 'EN' ? 'GAT Neural Engine: ACTIVE. Searching the web for 2026 AI Money Gaps. How can I assist your machine today?' : `Motor Neural GAT: ACTIVO. Buscando brechas de dinero IA en la web. ¿Cómo puedo ayudarte hoy?` }
+      { role: 'model', text: language === 'EN' ? `GAT Neural Engine: ACTIVE. Searching the web for ${new Date().getFullYear()} AI Money Gaps. How can I assist your machine today?` : `Motor Neural GAT: ACTIVO. Buscando brechas de dinero IA en la web. ¿Cómo puedo ayudarte hoy?` }
     ]);
   }, [language]);
 
@@ -379,7 +379,7 @@ const App: React.FC = () => {
               <span className="font-black text-white text-2xl tracking-tighter">G</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-2xl font-black text-slate-900 dark:text-white leading-none tracking-tighter uppercase">GATMONEY</span>
+              <span className="text-2xl font-black text-slate-900 dark:text-white leading-none tracking-tighter uppercase">GATSMONEY</span>
               <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-500 tracking-[0.3em] leading-none mt-1 flex items-center gap-1 uppercase">
                 <Activity className="w-2.5 h-2.5" /> PULSE_SYNCED
               </span>
@@ -548,7 +548,7 @@ const App: React.FC = () => {
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 z-50 bg-white dark:bg-slate-950 p-8 flex flex-col gap-6 animate-fade-in overflow-y-auto">
           <div className="flex justify-between items-center mb-10">
-            <div className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">GAT_MENU</div>
+            <div className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">GATSMONEY_MENU</div>
             <button onClick={() => setMobileMenuOpen(false)} className="p-2 bg-slate-100 dark:bg-slate-900 rounded-full"><X className="w-8 h-8 dark:text-white" /></button>
           </div>
           {[

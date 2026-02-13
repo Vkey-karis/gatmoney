@@ -22,7 +22,7 @@ export interface ChatResponse {
 export const getSupportResponse = async (message: string, history: any[]): Promise<string> => {
   const ai = getClient();
   const systemInstruction = `
-    You are the "GAT Support Hero" for GATMONEY.com.
+    You are the "GAT Support Hero" for GATSMONEY.com.
     Your mission is to help users navigate the app and understand the GAT (Gig, Action, Tool) strategy.
     
     APP STRUCTURE:
@@ -84,7 +84,8 @@ export const chatWithCoach = async (
       history: chatHistory
     });
 
-    const result = await chat.sendMessage({ message: `[SEARCH THE WEB FOR LATEST 2025 TRENDS. RESPOND IN ${language}] ${message}` });
+    const currentYear = new Date().getFullYear();
+    const result = await chat.sendMessage({ message: `[SEARCH THE WEB FOR LATEST ${currentYear} TRENDS. RESPOND IN ${language}] ${message}` });
 
     const sources = result.candidates?.[0]?.groundingMetadata?.groundingChunks
       ?.filter(chunk => chunk.web)
@@ -114,12 +115,13 @@ export const generateGATStrategy = async (
 ): Promise<GeneratedGigWithSources | null> => {
   const ai = getClient();
 
+  const currentYear = new Date().getFullYear();
   const prompt = `
     Based on the user's skills: "${skills}" and interests: "${interests}", 
-    generate a LIVE, HIGH-VALUE GAT (Gig + Action + Tool) strategy for 2025.
+    generate a LIVE, HIGH-VALUE GAT (Gig + Action + Tool) strategy for ${currentYear}.
     
     USE GOOGLE SEARCH to find actual gig postings or emerging gaps in markets like Fiverr/Upwork.
-    Find specific AI tool releases from late 2024/early 2025.
+    Find specific AI tool releases from late ${currentYear - 1}/early ${currentYear}.
     
     Return the response in JSON format matching the schema.
     IMPORTANT: TRANSLATE ALL CONTENT IN THE JSON VALUES TO LANGUAGE CODE: ${language}.

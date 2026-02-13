@@ -20,7 +20,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
     'Rules of Use': {
       title: 'Our Rules',
       icon: <FileText className="w-6 h-6 text-emerald-500" />,
-      content: `Welcome to GATMONEY.com. By using our site, you agree to these simple rules:
+      content: `Welcome to GATSMONEY.com. By using our site, you agree to these simple rules:
 
 1. USE OUR TOOLS RIGHT: The GAT plans we give you are to help you learn and work. You are responsible for your own work.
 2. BE HONEST: Do not use our AI to lie or trick people.
@@ -86,14 +86,14 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-2">Build Your Future with GAT</h2>
             <p className="text-slate-500 dark:text-slate-400 font-bold max-w-2xl">Master the only strategy you need to thrive in the age of AI. No experience required.</p>
           </div>
-          <button 
+          <button
             onClick={() => handleTabNavigate(TabView.LEARN)}
             className="group flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white dark:text-slate-950 font-black rounded-xl transition-all shadow-xl uppercase text-xs tracking-widest whitespace-nowrap mx-auto md:mx-0"
           >
             Start Learning Now <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           <article className="space-y-4">
             <h3 className="text-lg font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-tight">AI Gig Economy</h3>
@@ -133,7 +133,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg cursor-pointer">
                 <span className="font-black text-white text-sm">G</span>
               </div>
-              <span className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter cursor-pointer">GATMONEY</span>
+              <span className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter cursor-pointer">GATSMONEY</span>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 font-bold leading-relaxed mb-6">
               Empowering the next generation of digital entrepreneurs through search-grounded AI gig strategies.
@@ -152,7 +152,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 { label: 'Pricing Tiers', tab: TabView.PRICING }
               ].map((item) => (
                 <li key={item.label}>
-                  <button 
+                  <button
                     onClick={() => handleTabNavigate(item.tab)}
                     className="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-emerald-500 cursor-pointer transition-colors uppercase tracking-tight"
                   >
@@ -168,7 +168,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <ul className="space-y-3">
               {['Rules of Use', 'Privacy Rules', 'Help Center', 'System Status'].map((link) => (
                 <li key={link}>
-                  <button 
+                  <button
                     onClick={() => handleLegalClick(link)}
                     className="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-emerald-500 cursor-pointer transition-colors uppercase tracking-tight"
                   >
@@ -190,7 +190,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <p className="text-[10px] text-slate-500 dark:text-slate-400 font-black mb-4 uppercase leading-tight">
               AI Market Engine: 100% Operational
             </p>
-            <button 
+            <button
               onClick={() => handleTabNavigate(TabView.GENERATOR)}
               className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl text-[10px] uppercase tracking-widest transition-all shadow-lg"
             >
@@ -201,23 +201,23 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
         {/* Disclaimer */}
         <div className="mt-12 p-6 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
-           <div className="flex items-center gap-2 mb-2 text-slate-400 dark:text-slate-500">
-              <Scale className="w-4 h-4" />
-              <h4 className="text-[10px] font-black uppercase tracking-[0.1em]">Important Disclaimer</h4>
-           </div>
-           <p className="text-[10px] leading-relaxed text-slate-500 dark:text-slate-400 font-bold italic">
-              <strong>NOTICE:</strong> GATMONEY.com is an educational platform. Success in the gig economy requires skill, dedication, and proper tool utilization. We provide the framework, but results vary based on individual effort and market conditions.
-           </p>
+          <div className="flex items-center gap-2 mb-2 text-slate-400 dark:text-slate-500">
+            <Scale className="w-4 h-4" />
+            <h4 className="text-[10px] font-black uppercase tracking-[0.1em]">Important Disclaimer</h4>
+          </div>
+          <p className="text-[10px] leading-relaxed text-slate-500 dark:text-slate-400 font-bold italic">
+            <strong>NOTICE:</strong> GATSMONEY.com is an educational platform. Success in the gig economy requires skill, dedication, and proper tool utilization. We provide the framework, but results vary based on individual effort and market conditions.
+          </p>
         </div>
 
         <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-900 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-              &copy; {new Date().getFullYear()} <span className="text-emerald-500">GATMONEY.COM</span>
+              &copy; {new Date().getFullYear()} <span className="text-emerald-500">GATSMONEY.COM</span>
             </p>
             <span className="text-slate-200 dark:text-slate-800 text-[10px]">|</span>
-            <button 
-              onClick={() => handleTabNavigate(TabView.LEARN)} 
+            <button
+              onClick={() => handleTabNavigate(TabView.LEARN)}
               className="text-[10px] font-black text-slate-400 hover:text-emerald-500 dark:hover:text-white uppercase tracking-widest flex items-center gap-1 transition-all"
             >
               <BookOpen className="w-3 h-3" /> Learn More
@@ -243,8 +243,8 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 {activeModal.icon}
                 {activeModal.title}
               </h3>
-              <button 
-                onClick={() => setActiveModal(null)} 
+              <button
+                onClick={() => setActiveModal(null)}
                 className="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-500 dark:text-slate-400 transition-colors"
               >
                 <X className="w-6 h-6" />
@@ -254,7 +254,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <div className="whitespace-pre-wrap text-slate-600 dark:text-slate-300 leading-relaxed font-bold text-sm">
                 {activeModal.content}
               </div>
-              <button 
+              <button
                 onClick={() => setActiveModal(null)}
                 className="mt-10 w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase tracking-widest rounded-xl transition-all shadow-xl shadow-emerald-500/20"
               >

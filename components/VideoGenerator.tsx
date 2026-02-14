@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import React, { useState, useEffect } from 'react';
 import { generateVideo } from '../services/geminiService';
 import { VIDEO_TEMPLATES } from '../constants';
 import { Film, Loader2, PlayCircle, AlertCircle, LayoutTemplate, Sparkles, Copy, Check, Lock, Crown, CreditCard, Video } from 'lucide-react';

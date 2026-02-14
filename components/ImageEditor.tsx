@@ -1,4 +1,4 @@
-import Link from 'next/link'; // Assuming Next.js or React Router
+import React, { useState, useEffect, useRef } from 'react';
 import { editImage } from '../services/geminiService';
 import { Image as ImageIcon, Loader2, Sparkles, Upload, ArrowRight, Copy, Check, Wand2, AlertTriangle, CreditCard, Lock, Crown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -164,20 +164,7 @@ const ImageEditor: React.FC = () => {
         </p>
       </div>
 
-      {genCount >= MAX_FREE_GENERATIONS && (
-        <div className="mb-8 p-6 bg-amber-500/10 border-2 border-amber-500/50 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-4 animate-bounce-subtle">
-          <div className="flex items-center gap-4">
-            <AlertTriangle className="w-8 h-8 text-amber-500" />
-            <div>
-              <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tight">Free Generation Limit Reached</h4>
-              <p className="text-xs font-bold text-slate-500">You have used your {MAX_FREE_GENERATIONS} free edits. Upgrade to continue building.</p>
-            </div>
-          </div>
-          <button className="px-6 py-3 bg-indigo-600 text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-indigo-500 transition-all flex items-center gap-2">
-            <CreditCard className="w-4 h-4" /> Upgrade Now
-          </button>
-        </div>
-      )}
+
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-6">

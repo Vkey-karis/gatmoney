@@ -68,6 +68,7 @@ import HelpChatbot from './components/HelpChatbot';
 import { WelcomeMessage } from './components/WelcomeMessage';
 import ScrollToTop from './components/ScrollToTop';
 import GlobalBackButton from './components/GlobalBackButton';
+import MagneticParticles from './components/MagneticParticles';
 import { AuthenticatedDashboard } from './components/AuthenticatedDashboard';
 import { UnauthenticatedDashboard } from './components/UnauthenticatedDashboard';
 import { chatWithCoach } from './services/geminiService';
@@ -632,6 +633,7 @@ const App: React.FC = () => {
             }
 
             <main className="container mx-auto px-6 py-12 pb-32">
+              <MagneticParticles />
               {activeTab === TabView.DASHBOARD && renderDashboard()}
               {activeTab === TabView.WHY_GAT && <WhyUs />}
               {activeTab === TabView.LEARN && renderLearn()}

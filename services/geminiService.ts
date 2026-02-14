@@ -199,19 +199,24 @@ export const generateBusinessIntelligence = async (
   const currentYear = new Date().getFullYear();
 
   const prompt = `
-    Analyze the ${industry} industry in ${region} for ${currentYear}.
-    Strategic Goals: ${goals}.
+    ACT AS AN EXPERT BUSINESS STRATEGIST & MARKET RESEARCHER.
     
-    Identify:
-    1. Underserved Service Gaps.
-    2. Specific Competitor Weaknesses.
-    3. High-ROI Automation Opportunities.
-    4. Revenue Expansion Ideas.
-    5. A 90-Day Implementation Roadmap.
+    TASK: Analyze the ${industry} industry in ${region} for ${currentYear}.
+    CONTEXT: The user's strategic goals are: "${goals}".
     
-    USE GOOGLE SEARCH to find real-time market data.
-    Return JSON matching the schema.
-    Translate to language code: EN.
+    REQUIREMENTS:
+    1. USE GOOGLE SEARCH to find real-time data, trends, and forum discussions.
+    2. IF EXACT DATA IS MISSING, use your knowledge of industry patterns to INFER plausible gaps and opportunities. Do not return empty arrays.
+    3. YOU MUST GENERATE at least 3 items for each category below.
+    
+    PROVIDE THE FOLLOWING INSIGHTS:
+    - Service Gaps: What are customers complaining about? What needs are unmet?
+    - Competitor Weaknesses: Where are incumbents failing (price, speed, UX)?
+    - Automation Opportunities: Which specific workflows can be automated for high ROI? (Cite specific tools if possible).
+    - Implementation Roadmap: A concrete 90-day plan.
+    
+    Return the result strictly as JSON.
+    Translate all content to language code: EN.
   `;
 
   try {

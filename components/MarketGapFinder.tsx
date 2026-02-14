@@ -16,6 +16,7 @@ const MarketGapFinder: React.FC<MarketGapFinderProps> = ({ onNavigateToTab }) =>
     const [region, setRegion] = useState('');
     const [goals, setGoals] = useState('');
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [report, setReport] = useState<BusinessReportWithSources | null>(null);
 
     const handleAnalyze = async () => {
@@ -34,15 +35,23 @@ const MarketGapFinder: React.FC<MarketGapFinderProps> = ({ onNavigateToTab }) =>
         }
 
         setLoading(true);
+        setError(null);
         setReport(null);
 
-        const reportData = await generateBusinessIntelligence(industry, region || 'Global', goals);
+        try {
+            const reportData = await generateBusinessIntelligence(industry, region || 'Global', goals);
 
-        if (reportData) {
-            incrementScans();
-            setReport(reportData);
+            if (reportData) {
+                incrementScans();
+                setReport(reportData);
+            } else {
+                setError("Failed to generate report. Please try again or refine your inputs.");
+            }
+        } catch (err) {
+            setError("An unexpected error occurred.");
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     return (
@@ -84,6 +93,14 @@ const MarketGapFinder: React.FC<MarketGapFinderProps> = ({ onNavigateToTab }) =>
                     Scans Used: {scansUsed}/{maxScans} this month
                 </div>
             </div>
+
+            {/* Error Message */}
+            {error && (
+                <div className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-3 animate-fade-in">
+                    <AlertCircle className="w-6 h-6 text-red-500 flex-shrink-0" />
+                    <p className="text-red-500 font-bold">{error}</p>
+                </div>
+            )}
 
             {/* Input Form */}
             <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8 mb-8">

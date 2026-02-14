@@ -199,23 +199,35 @@ export const generateBusinessIntelligence = async (
   const currentYear = new Date().getFullYear();
 
   const prompt = `
-    ACT AS AN EXPERT BUSINESS STRATEGIST & MARKET RESEARCHER.
+    ACT AS AN EXPERT BUSINESS STRATEGIST.
     
     TASK: Analyze the ${industry} industry in ${region} for ${currentYear}.
-    CONTEXT: The user's strategic goals are: "${goals}".
+    STRATEGIC GOALS: "${goals}".
     
-    REQUIREMENTS:
-    1. USE GOOGLE SEARCH to find real-time data, trends, and forum discussions.
-    2. IF EXACT DATA IS MISSING, use your knowledge of industry patterns to INFER plausible gaps and opportunities. Do not return empty arrays.
-    3. YOU MUST GENERATE at least 3 items for each category below.
+    STEP 1: USE GOOGLE SEARCH to find real-time market data, trends, and forum discussions.
+    STEP 2: Synthesize the findings into a structured report.  
     
-    PROVIDE THE FOLLOWING INSIGHTS:
-    - Service Gaps: What are customers complaining about? What needs are unmet?
-    - Competitor Weaknesses: Where are incumbents failing (price, speed, UX)?
-    - Automation Opportunities: Which specific workflows can be automated for high ROI? (Cite specific tools if possible).
-    - Implementation Roadmap: A concrete 90-day plan.
+    OUTPUT FORMAT:
+    You must return a valid JSON object wrapped in \`\`\`json\`\`\` code block.
+    The JSON structure must be:
+    {
+      "industry": "string",
+      "region": "string",
+      "serviceGaps": ["string", "string", "string"],
+      "competitorWeaknesses": ["string", "string", "string"],
+      "automationOpportunities": [
+        { "area": "string", "tool": "string", "estimatedRoi": "string" }
+      ],
+      "revenueExpansion": ["string", "string"],
+      "implementationRoadmap": [
+        { "phase": "string", "actions": ["string", "string"] }
+      ],
+      "marketConfidence": number (0-100),
+      "trendDirection": "Up" | "Down" | "Stable"
+    }
     
-    Return the result strictly as JSON.
+    Your response must contain ONLY the JSON block. Do not include introductory text.
+    Ensure "serviceGaps", "competitorWeaknesses", "automationOpportunities", and "implementationRoadmap" have at least 3 items each. 
     Translate all content to language code: EN.
   `;
 
@@ -226,45 +238,20 @@ export const generateBusinessIntelligence = async (
       config: {
         systemInstruction: SYSTEM_INSTRUCTION_BASE,
         tools: [{ googleSearch: {} }],
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            industry: { type: Type.STRING },
-            region: { type: Type.STRING },
-            serviceGaps: { type: Type.ARRAY, items: { type: Type.STRING } },
-            competitorWeaknesses: { type: Type.ARRAY, items: { type: Type.STRING } },
-            automationOpportunities: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  area: { type: Type.STRING },
-                  tool: { type: Type.STRING },
-                  estimatedRoi: { type: Type.STRING }
-                }
-              }
-            },
-            revenueExpansion: { type: Type.ARRAY, items: { type: Type.STRING } },
-            implementationRoadmap: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  phase: { type: Type.STRING },
-                  actions: { type: Type.ARRAY, items: { type: Type.STRING } }
-                }
-              }
-            },
-            marketConfidence: { type: Type.NUMBER },
-            trendDirection: { type: Type.STRING, enum: ['Up', 'Down', 'Stable'] }
-          }
-        }
+        // responseMimeType: "application/json", <--- REMOVED strict schema to allow tool use flexibility
       }
     });
 
     if (response.text) {
-      const report = JSON.parse(response.text.trim()) as BusinessReport;
+      let jsonString = response.text.trim();
+      // Clean up markdown code blocks if present
+      if (jsonString.includes('```json')) {
+        jsonString = jsonString.split('```json')[1].split('```')[0].trim();
+      } else if (jsonString.includes('```')) {
+        jsonString = jsonString.split('```')[1].split('```')[0].trim();
+      }
+
+      const report = JSON.parse(jsonString) as BusinessReport;
       const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
         ?.filter(chunk => chunk.web)
         ?.map(chunk => ({ title: chunk.web.title, uri: chunk.web.uri })) || [];

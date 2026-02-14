@@ -230,3 +230,27 @@ export const CREDIT_PACKAGES = [
         popular: false,
     },
 ];
+
+export const IMAGE_PACKAGES = [
+    {
+        id: 'image-10',
+        type: 'image' as const,
+        count: 10,
+        price: 4.99,
+        popular: false,
+    },
+    {
+        id: 'image-50',
+        type: 'image' as const,
+        count: 50,
+        price: 19.99,
+        popular: true,
+    },
+    {
+        id: 'image-100',
+        type: 'image' as const,
+        count: 100,
+        price: 29.99,
+        popular: false,
+    },
+];

@@ -273,7 +273,7 @@ export const generateBusinessIntelligence = async (
   }
 };
 
-export const generateVideo = async (prompt: string): Promise<string | null> => {
+export const generateVideo = async (prompt: string, durationSeconds: number = 5): Promise<string | null> => {
   if ((window as any).aistudio) {
     const hasKey = await (window as any).aistudio.hasSelectedApiKey();
     if (!hasKey) {
@@ -290,7 +290,8 @@ export const generateVideo = async (prompt: string): Promise<string | null> => {
       config: {
         numberOfVideos: 1,
         resolution: '720p',
-        aspectRatio: '16:9'
+        aspectRatio: '16:9',
+        durationSeconds: durationSeconds,
       }
     });
 

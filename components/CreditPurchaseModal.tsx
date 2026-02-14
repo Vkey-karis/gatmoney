@@ -1,20 +1,26 @@
 import React, { useState } from 'react';
-import { X, CreditCard, Loader2, Check, Video } from 'lucide-react';
-import { CREDIT_PACKAGES } from '../services/creditManagement';
+import { X, CreditCard, Loader2, Check, Video, Image as ImageIcon } from 'lucide-react';
+import { CREDIT_PACKAGES, IMAGE_PACKAGES } from '../services/creditManagement';
 
 interface CreditPurchaseModalProps {
     isOpen: boolean;
     onClose: () => void;
     onPurchase: (packageId: string, paymentMethod: 'paypal' | 'paystack') => Promise<void>;
+    purchaseType?: 'image' | 'video';
 }
 
-const CreditPurchaseModal: React.FC<CreditPurchaseModalProps> = ({ isOpen, onClose, onPurchase }) => {
+const CreditPurchaseModal: React.FC<CreditPurchaseModalProps> = ({ isOpen, onClose, onPurchase, purchaseType = 'video' }) => {
     const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
     const [paymentMethod, setPaymentMethod] = useState<'paypal' | 'paystack'>('paypal');
     const [isProcessing, setIsProcessing] = useState(false);
     const [purchaseComplete, setPurchaseComplete] = useState(false);
 
     if (!isOpen) return null;
+
+    const packages = purchaseType === 'image' ? IMAGE_PACKAGES : CREDIT_PACKAGES;
+    const title = purchaseType === 'image' ? 'Image Generation Credits' : 'Video Generation Credits';
+    const description = purchaseType === 'image' ? 'Create more stunning visuals with Magic Photo Editor' : 'Generate more videos with Veo 3.1 Fast';
+    const Icon = purchaseType === 'image' ? ImageIcon : Video;
 
     const handlePurchase = async () => {
         if (!selectedPackage) return;
@@ -47,14 +53,14 @@ const CreditPurchaseModal: React.FC<CreditPurchaseModalProps> = ({ isOpen, onClo
                     </button>
                     <div className="flex items-center gap-3">
                         <div className="p-3 rounded-2xl bg-emerald-500/10">
-                            <Video className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                            <Icon className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
                         </div>
                         <div>
                             <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
-                                Purchase Video Credits
+                                Purchase {purchaseType === 'image' ? 'Image' : 'Video'} Credits
                             </h2>
                             <p className="text-sm text-slate-500 dark:text-slate-400 font-bold">
-                                Generate more videos with Veo 3.1 Fast
+                                {description}
                             </p>
                         </div>
                     </div>
@@ -78,13 +84,13 @@ const CreditPurchaseModal: React.FC<CreditPurchaseModalProps> = ({ isOpen, onClo
                                 Select Package
                             </h3>
                             <div className="grid grid-cols-2 gap-4">
-                                {CREDIT_PACKAGES.map((pkg) => (
+                                {packages.map((pkg: any) => (
                                     <button
                                         key={pkg.id}
                                         onClick={() => setSelectedPackage(pkg.id)}
                                         className={`relative p-6 rounded-2xl border-2 transition-all text-left ${selectedPackage === pkg.id
-                                                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 shadow-lg'
-                                                : 'border-slate-200 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-700'
+                                            ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 shadow-lg'
+                                            : 'border-slate-200 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-700'
                                             }`}
                                     >
                                         {pkg.popular && (
@@ -93,16 +99,16 @@ const CreditPurchaseModal: React.FC<CreditPurchaseModalProps> = ({ isOpen, onClo
                                             </div>
                                         )}
                                         <div className="text-3xl font-black text-slate-900 dark:text-white mb-1">
-                                            {pkg.seconds}s
+                                            {purchaseType === 'image' ? pkg.count : pkg.seconds}{purchaseType === 'image' ? '' : 's'}
                                         </div>
                                         <div className="text-sm text-slate-500 dark:text-slate-400 font-bold mb-3">
-                                            Video Generation
+                                            {purchaseType === 'image' ? 'Images' : 'Video Generation'}
                                         </div>
                                         <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
                                             ${pkg.price.toFixed(2)}
                                         </div>
                                         <div className="text-xs text-slate-400 font-bold mt-1">
-                                            ${(pkg.price / pkg.seconds).toFixed(2)}/second
+                                            ${(pkg.price / (purchaseType === 'image' ? pkg.count : pkg.seconds)).toFixed(2)}/{purchaseType === 'image' ? 'image' : 'second'}
                                         </div>
                                     </button>
                                 ))}
@@ -118,8 +124,8 @@ const CreditPurchaseModal: React.FC<CreditPurchaseModalProps> = ({ isOpen, onClo
                                 <button
                                     onClick={() => setPaymentMethod('paypal')}
                                     className={`flex-1 p-4 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${paymentMethod === 'paypal'
-                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20'
-                                            : 'border-slate-200 dark:border-slate-800 hover:border-blue-300'
+                                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20'
+                                        : 'border-slate-200 dark:border-slate-800 hover:border-blue-300'
                                         }`}
                                 >
                                     <CreditCard className="w-5 h-5" />
@@ -128,8 +134,8 @@ const CreditPurchaseModal: React.FC<CreditPurchaseModalProps> = ({ isOpen, onClo
                                 <button
                                     onClick={() => setPaymentMethod('paystack')}
                                     className={`flex-1 p-4 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${paymentMethod === 'paystack'
-                                            ? 'border-teal-500 bg-teal-50 dark:bg-teal-950/20'
-                                            : 'border-slate-200 dark:border-slate-800 hover:border-teal-300'
+                                        ? 'border-teal-500 bg-teal-50 dark:bg-teal-950/20'
+                                        : 'border-slate-200 dark:border-slate-800 hover:border-teal-300'
                                         }`}
                                 >
                                     <CreditCard className="w-5 h-5" />

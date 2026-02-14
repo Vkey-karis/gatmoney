@@ -1,8 +1,10 @@
-
-import React, { useState, useRef, useEffect } from 'react';
+import Link from 'next/link'; // Assuming Next.js or React Router
 import { editImage } from '../services/geminiService';
-import { Image as ImageIcon, Loader2, Sparkles, Upload, ArrowRight, Copy, Check, Wand2, AlertTriangle, CreditCard, Lock } from 'lucide-react';
+import { Image as ImageIcon, Loader2, Sparkles, Upload, ArrowRight, Copy, Check, Wand2, AlertTriangle, CreditCard, Lock, Crown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useSubscription, UserTier } from '../context/SubscriptionContext';
+import CreditPurchaseModal from './CreditPurchaseModal';
+import { initiateCreditPurchase, processCreditPurchase } from '../services/creditManagement';
 
 const STYLE_PRESETS = [
   { label: 'Cyberpunk', prompt: 'Convert this image to a cyberpunk style with neon lights' },
@@ -16,17 +18,19 @@ const MAX_FREE_GENERATIONS = 3;
 
 const ImageEditor: React.FC = () => {
   const { user } = useAuth();
+  const { tier, imageCredits, deductImageCredit, addImageCredits: addContextCredits } = useSubscription(); // Renamed to avoid conflict
   const [prompt, setPrompt] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [mimeType, setMimeType] = useState<string>('image/png');
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [genCount, setGenCount] = useState(0);
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Auth Check
   if (!user) {
+    // ... existing auth check code ...
     return (
       <div className="max-w-2xl mx-auto animate-fade-in text-center py-20">
         <div className="bg-gradient-to-br from-purple-500/10 to-cyan-500/10 border-2 border-purple-500/30 rounded-3xl p-12">
@@ -46,10 +50,57 @@ const ImageEditor: React.FC = () => {
     );
   }
 
-  useEffect(() => {
-    const count = parseInt(localStorage.getItem('gat_image_gen_count') || '0');
-    setGenCount(count);
-  }, []);
+  // Tier Access Check
+  if (tier === 'FREE') {
+    return (
+      <div className="max-w-2xl mx-auto animate-fade-in text-center py-20">
+        <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-2 border-amber-500/30 rounded-3xl p-12">
+          <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Crown className="w-8 h-8 text-amber-500" />
+          </div>
+          <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3 uppercase">Upgrade Required</h3>
+          <p className="text-slate-600 dark:text-slate-400 mb-6 font-bold">
+            The Magic Photo Editor is available on Individual, Pro, and Business plans.
+          </p>
+          <div className="flex justify-center gap-4">
+            <button
+              onClick={() => window.location.href = '/?tab=PRICING'} // Simple navigation
+              className="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-2xl transition-all uppercase tracking-widest text-sm shadow-xl shadow-amber-500/20"
+            >
+              View Plans
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const handlePurchaseCredits = async (packageId: string, paymentMethod: 'paypal' | 'paystack') => {
+    // Determine package details from ID (e.g. 'image-10')
+    const count = parseInt(packageId.split('-')[1]);
+    const priceMap: any = { '10': 4.99, '50': 19.99, '100': 29.99 };
+    const price = priceMap[count.toString()] || 0;
+
+    // Simulate Payment Flow
+    // 1. Initiate
+    const purchaseId = await initiateCreditPurchase(user.id, 'image', count, price, paymentMethod);
+
+    if (purchaseId) {
+      // 2. Simulate Processing (In prod, this would wait for webhook/callback)
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // 3. Complete
+      await processCreditPurchase(purchaseId, `mock_payment_${Date.now()}`, 'completed');
+
+      // 4. Update local context (optional as context might auto-update via subscription, but good for immediate feedback)
+      // addContextCredits is already handled by processCreditPurchase internally updating DB, 
+      // but we might need to refresh context if it doesn't listen to DB changes in real-time. 
+      // For now, let's trust the user experience needs an immediate local update or refresh.
+      // Actually processCreditPurchase UPDATES user_credits table. SubscriptionContext loads on mount. 
+      // We should manually update context to reflect change immediately without reload.
+      addContextCredits(count);
+    }
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -68,8 +119,8 @@ const ImageEditor: React.FC = () => {
   const handleEdit = async () => {
     if (!selectedImage || !prompt.trim()) return;
 
-    if (genCount >= MAX_FREE_GENERATIONS) {
-      alert("You've reached your free limit of 3 AI image generations. Please upgrade your plan to continue.");
+    if (imageCredits <= 0) {
+      setShowPurchaseModal(true);
       return;
     }
 
@@ -82,9 +133,9 @@ const ImageEditor: React.FC = () => {
       const resultUrl = await editImage(base64Data, mimeType, prompt);
       setGeneratedImage(resultUrl);
 
-      const newCount = genCount + 1;
-      setGenCount(newCount);
-      localStorage.setItem('gat_image_gen_count', newCount.toString());
+      // Deduct credit on success
+      deductImageCredit();
+
     } catch (error) {
       console.error(error);
       alert("Failed to edit image. Please ensure your image is under 4MB and try again.");
@@ -158,8 +209,16 @@ const ImageEditor: React.FC = () => {
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Modification Prompt</label>
-              <div className="text-[10px] font-black uppercase text-slate-400">
-                {MAX_FREE_GENERATIONS - genCount} / {MAX_FREE_GENERATIONS} FREE LEFT
+              <div className="flex items-center gap-2">
+                <div className={`text-[10px] font-black uppercase px-2 py-1 rounded-lg ${imageCredits > 0 ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'}`}>
+                  {imageCredits} Credits Left
+                </div>
+                <button
+                  onClick={() => setShowPurchaseModal(true)}
+                  className="text-[10px] font-black uppercase text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 flex items-center gap-1"
+                >
+                  <CreditCard className="w-3 h-3" /> Buy More
+                </button>
               </div>
             </div>
 
@@ -186,12 +245,20 @@ const ImageEditor: React.FC = () => {
               />
               <button
                 onClick={handleEdit}
-                disabled={loading || !selectedImage || !prompt || genCount >= MAX_FREE_GENERATIONS}
+                disabled={loading || !selectedImage || !prompt}
                 className="bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-300 dark:disabled:bg-slate-800 disabled:cursor-not-allowed text-white px-6 rounded-xl font-black transition-all shadow-lg"
               >
-                {loading ? <Loader2 className="animate-spin" /> : <Sparkles className="w-5 h-5" />}
+                {loading ? <Loader2 className="animate-spin" /> : imageCredits > 0 ? <Sparkles className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
               </button>
             </div>
+
+            {imageCredits === 0 && (
+              <div className="mt-2 text-center">
+                <button onClick={() => setShowPurchaseModal(true)} className="text-xs text-indigo-500 font-bold hover:underline">
+                  You need credits to generate. Buy now.
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -226,6 +293,13 @@ const ImageEditor: React.FC = () => {
           )}
         </div>
       </div>
+
+      <CreditPurchaseModal
+        isOpen={showPurchaseModal}
+        onClose={() => setShowPurchaseModal(false)}
+        onPurchase={handlePurchaseCredits}
+        purchaseType="image"
+      />
     </div>
   );
 };

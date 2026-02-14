@@ -318,104 +318,103 @@ const App: React.FC = () => {
     }
 
     return (
-    <div className="max-w-4xl mx-auto h-[700px] flex flex-col bg-white dark:bg-slate-900 rounded-[3rem] border-2 border-slate-200 dark:border-slate-800 shadow-3xl overflow-hidden animate-fade-in">
-      {/* Coach Header */}
-      <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-indigo-500/10 rounded-2xl text-indigo-600 dark:text-indigo-400">
-            <Bot className="w-8 h-8" />
-          </div>
-          <div>
-            <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t.coach.title}</h3>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-              <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest">{t.coach.status}</span>
+      <div className="max-w-4xl mx-auto h-[700px] flex flex-col bg-white dark:bg-slate-900 rounded-[3rem] border-2 border-slate-200 dark:border-slate-800 shadow-3xl overflow-hidden animate-fade-in">
+        {/* Coach Header */}
+        <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-indigo-500/10 rounded-2xl text-indigo-600 dark:text-indigo-400">
+              <Bot className="w-8 h-8" />
+            </div>
+            <div>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t.coach.title}</h3>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest">{t.coach.status}</span>
+              </div>
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsThinkingMode(!isThinkingMode)}
+              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${isThinkingMode
+                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200'
+                }`}
+            >
+              <BrainCircuit className="w-4 h-4 inline mr-2" /> {isThinkingMode ? t.coach.thinking : t.coach.fast}
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setIsThinkingMode(!isThinkingMode)}
-            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${isThinkingMode
-              ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
-              : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200'
-              }`}
-          >
-            <BrainCircuit className="w-4 h-4 inline mr-2" /> {isThinkingMode ? t.coach.thinking : t.coach.fast}
-          </button>
-        </div>
-      </div>
 
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-8 space-y-6 scroll-smooth custom-scrollbar bg-slate-50 dark:bg-slate-950/20">
-        {messages.map((m, idx) => (
-          <div key={idx} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'} animate-scale-in`}>
-            <div className={`max-w-[85%] p-6 rounded-[2rem] text-sm font-bold leading-relaxed shadow-xl ${m.role === 'user'
-              ? 'bg-indigo-600 text-white rounded-tr-none'
-              : 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-800 rounded-tl-none'
-              }`}>
-              {m.text}
+        {/* Messages Area */}
+        <div className="flex-1 overflow-y-auto p-8 space-y-6 scroll-smooth custom-scrollbar bg-slate-50 dark:bg-slate-950/20">
+          {messages.map((m, idx) => (
+            <div key={idx} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'} animate-scale-in`}>
+              <div className={`max-w-[85%] p-6 rounded-[2rem] text-sm font-bold leading-relaxed shadow-xl ${m.role === 'user'
+                ? 'bg-indigo-600 text-white rounded-tr-none'
+                : 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-800 rounded-tl-none'
+                }`}>
+                {m.text}
 
-              {m.sources && m.sources.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Grounding Sources:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {m.sources.map((source, sIdx) => (
-                      <a
-                        key={sIdx}
-                        href={source.uri}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[9px] font-black px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center gap-1 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all border border-slate-200 dark:border-slate-700"
-                      >
-                        {source.title.slice(0, 30)}... <ExternalLink className="w-2.5 h-2.5" />
-                      </a>
-                    ))}
+                {m.sources && m.sources.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Grounding Sources:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {m.sources.map((source, sIdx) => (
+                        <a
+                          key={sIdx}
+                          href={source.uri}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[9px] font-black px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center gap-1 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all border border-slate-200 dark:border-slate-700"
+                        >
+                          {source.title.slice(0, 30)}... <ExternalLink className="w-2.5 h-2.5" />
+                        </a>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
+              </div>
+              {m.isThinking && (
+                <span className="mt-2 text-[9px] font-black text-indigo-500 uppercase tracking-widest flex items-center gap-1">
+                  <BrainCircuit className="w-3 h-3" /> Processed via Deep Reasoning
+                </span>
               )}
             </div>
-            {m.isThinking && (
-              <span className="mt-2 text-[9px] font-black text-indigo-500 uppercase tracking-widest flex items-center gap-1">
-                <BrainCircuit className="w-3 h-3" /> Processed via Deep Reasoning
-              </span>
-            )}
-          </div>
-        ))}
-        {isChatLoading && (
-          <div className="flex justify-start">
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] rounded-tl-none border border-slate-200 dark:border-slate-800 shadow-xl flex items-center gap-3">
-              <Loader2 className="w-5 h-5 animate-spin text-emerald-500" />
-              <span className="text-xs font-black text-slate-500 uppercase tracking-widest animate-pulse">{t.common.thinking}</span>
+          ))}
+          {isChatLoading && (
+            <div className="flex justify-start">
+              <div className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] rounded-tl-none border border-slate-200 dark:border-slate-800 shadow-xl flex items-center gap-3">
+                <Loader2 className="w-5 h-5 animate-spin text-emerald-500" />
+                <span className="text-xs font-black text-slate-500 uppercase tracking-widest animate-pulse">{t.common.thinking}</span>
+              </div>
             </div>
-          </div>
-        )}
-        <div ref={chatEndRef} />
-      </div>
+          )}
+          <div ref={chatEndRef} />
+        </div>
 
-      {/* Chat Input */}
-      <div className="p-8 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
-        <div className="flex gap-4">
-          <input
-            type="text"
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-            placeholder={t.coach.input}
-            className="flex-1 bg-slate-100 dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-800 rounded-2xl px-6 py-4 text-sm font-bold focus:outline-none focus:border-indigo-500 dark:text-white"
-          />
-          <button
-            onClick={() => handleSendMessage()}
-            disabled={!inputMessage.trim() || isChatLoading}
-            className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 rounded-2xl font-black uppercase tracking-widest transition-all flex items-center gap-3 shadow-xl shadow-indigo-500/20 disabled:opacity-50"
-          >
-            {isChatLoading ? <Loader2 className="animate-spin" /> : <Send className="w-5 h-5" />}
-            <span className="hidden md:inline">Send</span>
-          </button>
+        {/* Chat Input */}
+        <div className="p-8 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex gap-4">
+            <input
+              type="text"
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+              placeholder={t.coach.input}
+              className="flex-1 bg-slate-100 dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-800 rounded-2xl px-6 py-4 text-sm font-bold focus:outline-none focus:border-indigo-500 dark:text-white"
+            />
+            <button
+              onClick={() => handleSendMessage()}
+              disabled={!inputMessage.trim() || isChatLoading}
+              className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 rounded-2xl font-black uppercase tracking-widest transition-all flex items-center gap-3 shadow-xl shadow-indigo-500/20 disabled:opacity-50"
+            >
+              {isChatLoading ? <Loader2 className="animate-spin" /> : <Send className="w-5 h-5" />}
+              <span className="hidden md:inline">Send</span>
+            </button>
+          </div>
         </div>
       </div>
-      </div>
-    </div>
     );
   };
 
@@ -424,7 +423,13 @@ const App: React.FC = () => {
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 font-sans selection:bg-emerald-500 selection:text-white transition-colors duration-300">
 
         {!userMode && !loading ? (
-          <LandingPage onSelectMode={handleModeSelect} />
+          <LandingPage
+            onSelectMode={handleModeSelect}
+            language={language}
+            onLanguageChange={handleLanguageChange}
+            isDark={isDark}
+            onThemeToggle={toggleTheme}
+          />
         ) : (
           <>
             <OnboardingModal isOpen={showOnboarding} onClose={handleCloseOnboarding} mode={userMode || 'FREELANCER'} />

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Check, Zap, Rocket, Star, ShieldCheck, Video, Search, BrainCircuit, Globe, Coins, CreditCard, Loader2, Lock } from 'lucide-react';
+import { Check, Zap, Rocket, Star, ShieldCheck, Video, Search, BrainCircuit, Globe, Coins, CreditCard, Loader2, Lock, Briefcase } from 'lucide-react';
 
 import { useSubscription, UserTier } from '../context/SubscriptionContext';
 
@@ -21,23 +21,45 @@ const Pricing: React.FC = () => {
         "10 Market Scans / Month",
         "Standard AI Coach Access",
         "Basic Market Metrics",
-        "Manual Gig Tracking"
+        "Manual Gig Tracking",
+        "❌ No Image Generation",
+        "❌ No Video Generation"
       ],
       cta: "Current Plan",
       featured: false,
       color: "slate"
     },
     {
-      id: 'PRO',
-      name: "Pro Freelancer",
+      id: 'INDIVIDUAL',
+      name: "Individual",
       price: "$19",
       period: "/mo",
-      desc: "For serious freelancers and creators.",
-      icon: <Zap className="w-6 h-6 text-emerald-500" />,
+      desc: "For freelancers scaling their business.",
+      icon: <Briefcase className="w-6 h-6 text-blue-500" />,
       features: [
         "30 Market Scans / Month",
-        "Advanced Metrics (Pricing, Competition)",
-        "AI Leverage Scores",
+        "Advanced Metrics & AI Scores",
+        "Deep Thinking Coach",
+        "Priority Support",
+        "💳 Can Buy Media Credits",
+        "❌ No Monthly Media Included"
+      ],
+      cta: "Upgrade to Individual",
+      featured: false,
+      color: "blue"
+    },
+    {
+      id: 'PRO',
+      name: "Pro Creator",
+      price: "$59",
+      period: "/mo",
+      desc: "For creators who need media generation.",
+      icon: <Zap className="w-6 h-6 text-emerald-500" />,
+      features: [
+        "100 Market Scans / Month",
+        "20 Image Generations / Month",
+        "90 Seconds Video / Month (Veo 3.1 Fast)",
+        "Advanced Metrics & AI Scores",
         "Deep Thinking Coach",
         "Priority Support"
       ],
@@ -53,12 +75,13 @@ const Pricing: React.FC = () => {
       desc: "For agencies & startups scaling systems.",
       icon: <Rocket className="w-8 h-8 text-indigo-500" />,
       features: [
-        "All Pro Features",
+        "30 Automation Scans / Month",
+        "20 Image Generations / Month",
+        "180 Seconds Video / Month",
         "Business Gap Intelligence Engine",
         "Competitor Weakness Analysis",
-        "ROI Automation Calculators",
-        "90-Day Execution Roadmaps",
-        "Enterprise API Access"
+        "Use Your Own API Keys",
+        "Enterprise Support"
       ],
       cta: "Unlock Business",
       featured: false,
@@ -108,7 +131,7 @@ const Pricing: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {plans.map((plan, idx) => (
           <div
             key={idx}
@@ -164,6 +187,59 @@ const Pricing: React.FC = () => {
             </button>
           </div>
         ))}
+      </div>
+
+      {/* Credit Purchase Section */}
+      <div className="mt-20 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 rounded-[2.5rem] p-10 md:p-14 border-2 border-emerald-200 dark:border-emerald-800">
+        <div className="text-center mb-12">
+          <h3 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-4">
+            Need More <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">Video Credits?</span>
+          </h3>
+          <p className="text-slate-600 dark:text-slate-400 font-bold max-w-2xl mx-auto">
+            All users can purchase additional video generation credits. Perfect for one-off projects or when you need extra capacity.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+          {[
+            { seconds: 10, price: 7.50, popular: false },
+            { seconds: 30, price: 22.50, popular: true },
+            { seconds: 60, price: 45.00, popular: false },
+            { seconds: 120, price: 90.00, popular: false },
+          ].map((pkg, idx) => (
+            <div
+              key={idx}
+              className={`relative p-6 rounded-2xl bg-white dark:bg-slate-900 border-2 transition-all duration-300 ${pkg.popular
+                ? 'border-emerald-500 shadow-lg shadow-emerald-500/20 scale-105'
+                : 'border-slate-200 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-700'
+                }`}
+            >
+              {pkg.popular && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-white dark:text-slate-950 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest">
+                  Popular
+                </div>
+              )}
+
+              <div className="text-center">
+                <div className="text-3xl font-black text-slate-900 dark:text-white mb-1">{pkg.seconds}s</div>
+                <div className="text-sm text-slate-500 dark:text-slate-400 font-bold mb-4">Video Credits</div>
+                <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mb-6">${pkg.price}</div>
+                <button
+                  className={`w-full py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${pkg.popular
+                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md'
+                    : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white'
+                    }`}
+                >
+                  Purchase
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-8 text-center text-sm text-slate-500 dark:text-slate-400 font-bold">
+          💡 Tip: Business tier users can use their own API keys to avoid credit costs
+        </div>
       </div>
 
       <div className="mt-20 bg-slate-50 dark:bg-slate-900/50 rounded-[2.5rem] p-10 md:p-14 border border-slate-200 dark:border-slate-800 text-center">

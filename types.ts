@@ -65,3 +65,87 @@ export interface LanguageConfig {
   flag: string;
   isRTL?: boolean;
 }
+
+// Media Credits & Generation Types
+export interface MediaCredits {
+  userId: string;
+  imageCredits: number;
+  videoSecondsCredits: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MediaGenerationLog {
+  id: string;
+  userId: string;
+  mediaType: 'image' | 'video';
+  prompt: string;
+  creditsUsed: number;
+  mediaUrl?: string;
+  generationStatus: 'pending' | 'completed' | 'failed';
+  errorMessage?: string;
+  createdAt: string;
+}
+
+export interface CreditPurchase {
+  id: string;
+  userId: string;
+  purchaseType: 'image' | 'video';
+  creditsPurchased: number;
+  amountPaid: number;
+  paymentMethod: 'paypal' | 'paystack';
+  paymentId: string;
+  status: 'pending' | 'completed' | 'failed';
+  createdAt: string;
+}
+
+// Fraud Detection Types
+export interface UserFingerprint {
+  id: string;
+  userId: string;
+  ipAddress: string;
+  browserFingerprint: string;
+  deviceInfo: {
+    userAgent: string;
+    platform: string;
+    language: string;
+    screenResolution: string;
+    timezone: string;
+  };
+  firstSeen: string;
+  lastSeen: string;
+}
+
+// Media Library Types
+export interface MediaLibraryItem {
+  id: string;
+  mediaType: 'image' | 'video';
+  title: string;
+  description?: string;
+  prompt?: string;
+  mediaUrl: string;
+  thumbnailUrl?: string;
+  isFeatured: boolean;
+  tags: string[];
+  createdAt: string;
+}
+
+// API Key Management Types
+export interface UserAPIKey {
+  id: string;
+  userId: string;
+  serviceName: 'gemini_imagen' | 'veo';
+  encryptedApiKey: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Credit Package Types
+export interface CreditPackage {
+  id: string;
+  type: 'video';
+  seconds: number;
+  price: number;
+  popular?: boolean;
+}

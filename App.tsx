@@ -632,8 +632,10 @@ const App: React.FC = () => {
               )
             }
 
-            <main className="container mx-auto px-6 py-12 pb-32">
-              <MagneticParticles />
+            {/* Background Particles - Fixed at Z-0 */}
+            <MagneticParticles />
+
+            <main className="container mx-auto px-6 py-12 pb-32 relative z-[10]">
               {activeTab === TabView.DASHBOARD && renderDashboard()}
               {activeTab === TabView.WHY_GAT && <WhyUs />}
               {activeTab === TabView.LEARN && renderLearn()}

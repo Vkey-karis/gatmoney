@@ -152,14 +152,17 @@ const MarketGapFinder: React.FC<MarketGapFinderProps> = ({ onNavigateToTab }) =>
 
             {/* Results */}
             {report && (
-                <div className="space-y-6">
+                <div className="space-y-6 animate-fade-in">
+                    {/* Debug Info (Optional - remove in production) */}
+                    {/* <pre className="text-xs">{JSON.stringify(report, null, 2)}</pre> */}
+
                     {/* Service Gaps */}
-                    {report.serviceGaps && report.serviceGaps.length > 0 && (
-                        <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8">
-                            <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                                <Activity className="w-5 h-5 md:w-6 md:h-6 text-indigo-500" />
-                                Service Gaps
-                            </h3>
+                    <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8">
+                        <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <Activity className="w-5 h-5 md:w-6 md:h-6 text-indigo-500" />
+                            Service Gaps
+                        </h3>
+                        {report.serviceGaps && report.serviceGaps.length > 0 ? (
                             <div className="space-y-3">
                                 {report.serviceGaps.map((gap, idx) => (
                                     <div key={idx} className="p-4 bg-indigo-50 dark:bg-indigo-950/20 rounded-xl border border-indigo-200 dark:border-indigo-800">
@@ -167,16 +170,18 @@ const MarketGapFinder: React.FC<MarketGapFinderProps> = ({ onNavigateToTab }) =>
                                     </div>
                                 ))}
                             </div>
-                        </div>
-                    )}
+                        ) : (
+                            <p className="text-slate-500 italic">No specific service gaps identified.</p>
+                        )}
+                    </div>
 
                     {/* Competitor Weaknesses */}
-                    {report.competitorWeaknesses && report.competitorWeaknesses.length > 0 && (
-                        <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8">
-                            <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                                <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-emerald-500" />
-                                Competitor Weaknesses
-                            </h3>
+                    <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8">
+                        <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-emerald-500" />
+                            Competitor Weaknesses
+                        </h3>
+                        {report.competitorWeaknesses && report.competitorWeaknesses.length > 0 ? (
                             <div className="space-y-3">
                                 {report.competitorWeaknesses.map((weakness, idx) => (
                                     <div key={idx} className="p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-xl border border-emerald-200 dark:border-emerald-800">
@@ -184,16 +189,18 @@ const MarketGapFinder: React.FC<MarketGapFinderProps> = ({ onNavigateToTab }) =>
                                     </div>
                                 ))}
                             </div>
-                        </div>
-                    )}
+                        ) : (
+                            <p className="text-slate-500 italic">No specific competitor weaknesses identified.</p>
+                        )}
+                    </div>
 
                     {/* ROI Opportunities */}
-                    {report.automationOpportunities && report.automationOpportunities.length > 0 && (
-                        <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8">
-                            <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                                <Zap className="w-5 h-5 md:w-6 md:h-6 text-amber-500" />
-                                High-ROI Automation Opportunities
-                            </h3>
+                    <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8">
+                        <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <Zap className="w-5 h-5 md:w-6 md:h-6 text-amber-500" />
+                            High-ROI Automation Opportunities
+                        </h3>
+                        {report.automationOpportunities && report.automationOpportunities.length > 0 ? (
                             <div className="space-y-4">
                                 {report.automationOpportunities.map((opp, idx) => (
                                     <div key={idx} className="p-4 md:p-5 bg-amber-50 dark:bg-amber-950/20 rounded-xl border border-amber-200 dark:border-amber-800">
@@ -205,16 +212,18 @@ const MarketGapFinder: React.FC<MarketGapFinderProps> = ({ onNavigateToTab }) =>
                                     </div>
                                 ))}
                             </div>
-                        </div>
-                    )}
+                        ) : (
+                            <p className="text-slate-500 italic">No specific automation opportunities found.</p>
+                        )}
+                    </div>
 
                     {/* Implementation Roadmap */}
-                    {report.implementationRoadmap && report.implementationRoadmap.length > 0 && (
-                        <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border-2 border-indigo-500/30 rounded-3xl p-6 md:p-8">
-                            <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                                <Rocket className="w-5 h-5 md:w-6 md:h-6 text-indigo-500" />
-                                Implementation Roadmap
-                            </h3>
+                    <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border-2 border-indigo-500/30 rounded-3xl p-6 md:p-8">
+                        <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <Rocket className="w-5 h-5 md:w-6 md:h-6 text-indigo-500" />
+                            Implementation Roadmap
+                        </h3>
+                        {report.implementationRoadmap && report.implementationRoadmap.length > 0 ? (
                             <div className="space-y-4">
                                 {report.implementationRoadmap.map((phase, idx) => (
                                     <div key={idx} className="p-4 bg-white/50 dark:bg-slate-900/50 rounded-xl">
@@ -227,8 +236,10 @@ const MarketGapFinder: React.FC<MarketGapFinderProps> = ({ onNavigateToTab }) =>
                                     </div>
                                 ))}
                             </div>
-                        </div>
-                    )}
+                        ) : (
+                            <p className="text-slate-500 italic">Roadmap generation pending details.</p>
+                        )}
+                    </div>
                 </div>
             )}
         </div>

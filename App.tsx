@@ -66,6 +66,8 @@ import AuthModal from './components/AuthModal';
 import Pricing from './components/Pricing';
 import HelpChatbot from './components/HelpChatbot';
 import { WelcomeMessage } from './components/WelcomeMessage';
+import ScrollToTop from './components/ScrollToTop';
+import GlobalBackButton from './components/GlobalBackButton';
 import { AuthenticatedDashboard } from './components/AuthenticatedDashboard';
 import { UnauthenticatedDashboard } from './components/UnauthenticatedDashboard';
 import { chatWithCoach } from './services/geminiService';
@@ -645,6 +647,9 @@ const App: React.FC = () => {
               {activeTab === TabView.PRICING && <Pricing />}
               {activeTab === TabView.BUSINESS_INTEL && <BusinessIntelligence onNavigateToTab={setActiveTab} />}
             </main>
+
+            <ScrollToTop />
+            {userMode && <GlobalBackButton currentTab={activeTab} onNavigate={setActiveTab} />}
 
             <Footer onNavigate={setActiveTab} />
             <HelpChatbot />

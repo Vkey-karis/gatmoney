@@ -539,11 +539,7 @@ const App: React.FC = () => {
                       </div>
                     </div>
                   ) : (
-                    <div
-                      className="relative"
-                      onMouseEnter={() => setShowLoginTooltip(true)}
-                      onMouseLeave={() => setShowLoginTooltip(false)}
-                    >
+                    <div>
                       <button
                         onClick={() => {
                           setShowAuthModal(true);
@@ -554,42 +550,6 @@ const App: React.FC = () => {
                         <User className="w-3.5 h-3.5 xl:w-4 xl:h-4" />
                         <span className="hidden xl:inline">Login</span>
                       </button>
-
-                      {/* Get Started Tooltip */}
-                      {showLoginTooltip && (
-                        <div className="absolute bottom-full right-0 mb-3 w-64 animate-scale-in">
-                          <div className="relative bg-gradient-to-br from-emerald-500 to-indigo-600 p-[2px] rounded-2xl shadow-2xl">
-                            <div className="bg-white dark:bg-slate-900 rounded-2xl p-4">
-                              <div className="flex items-start gap-3 mb-3">
-                                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0 animate-pulse">
-                                  <Rocket className="w-5 h-5 text-white" />
-                                </div>
-                                <div className="flex-1">
-                                  <h4 className="text-sm font-black text-slate-900 dark:text-white mb-1">
-                                    Join 10,000+ GAT Strategists
-                                  </h4>
-                                  <p className="text-xs text-slate-600 dark:text-slate-400">
-                                    Start turning AI tools into profit machines today!
-                                  </p>
-                                </div>
-                              </div>
-                              <button
-                                onClick={() => {
-                                  setShowAuthModal(true);
-                                  setShowLoginTooltip(false);
-                                }}
-                                className="w-full px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-black rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 text-xs uppercase tracking-wider"
-                              >
-                                <Rocket className="w-4 h-4" />
-                                Get Started Free
-                                <ArrowRight className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </div>
-                          {/* Arrow */}
-                          <div className="absolute -bottom-2 right-4 w-4 h-4 bg-white dark:bg-slate-900 transform rotate-45 border-r-2 border-b-2 border-emerald-500"></div>
-                        </div>
-                      )}
                     </div>
                   )}
                 </nav>
